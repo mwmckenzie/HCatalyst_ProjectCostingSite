@@ -1,0 +1,41 @@
+@using HCatalystProjectCostsSite.Models
+@using System.Collections.ObjectModel
+@using HCatalystProjectCostsSite.Enums
+
+<MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+    <Columns>
+        <PropertyColumn Property="x => x.details.title" Title="Cost" />
+        <PropertyColumn Property="x => x.amount" Format="C"  Title="Amount" AggregateDefinition="_costAggregation"/>
+        <PropertyColumn Property="x => x.details.author"  Title="Submitted By"/>
+        <PropertyColumn Property="x => x.details.submittedOn"  Title="Submitted On"/>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    
+    [Parameter]
+    public ObservableCollection<Cost> costs { get; set; } = new();
+    
+    private AggregateDefinition<Cost> _costAggregation = new AggregateDefinition<Cost>
+    {
+        Type = AggregateType.Custom,
+        CustomAggregate = x =>
+        {
+            var total = x.Sum(y => y.amount);
+            return $"Total Cost is {total:C0}";
+        }
+    };
+
+    protected override void OnInitialized()
+    {
+        costs.Add(new Cost()
+        {
+            recurring = false,
+            amount = 100.10f,
+            basis = Basis.None,
+            details = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
+        });
+        
+    }
+
+}

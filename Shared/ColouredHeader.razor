@@ -1,0 +1,12 @@
+
+<MudPaper Class="flex-grow-1 mb-8 pa-4 mud-theme-tertiary" >
+    <MudText Typo="Typo.h3" GutterBottom="false">@headerText</MudText>
+</MudPaper>
+<MudDivider Class="mb-16"/>
+
+@code {
+
+    [Parameter]
+    public string headerText { get; set; } = "Title";
+
+}

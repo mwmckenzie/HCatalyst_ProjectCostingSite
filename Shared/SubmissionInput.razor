@@ -1,0 +1,15 @@
+@using HCatalystProjectCostsSite.Models
+
+<MudStack Row="true">
+    <MudTextField @bind-Value="@submission.title" Label="Title" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+    <MudTextField @bind-Value="@submission.author" Label="Submitted By" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+</MudStack>
+
+<MudTextField @bind-Value="@submission.text" Label="Description" Variant="Variant.Outlined" Lines="5" />
+
+@code {
+
+    [Parameter]
+    public Submission submission { get; set; } = new();
+
+}

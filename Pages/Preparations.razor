@@ -1,0 +1,106 @@
+﻿@page "/preparations"
+@using HCatalystProjectCostsSite.Models
+@using System.Collections.ObjectModel
+@using HCatalystProjectCostsSite.Enums
+
+
+<PageTitle>Preparations</PageTitle>
+<ColouredHeader headerText="Preparations"/>
+
+@if(_cost is not null)
+{
+    <MudText Typo="Typo.h4" GutterBottom="true">New Cost</MudText>
+    <CostInput cost="@_cost"/>
+    <MudPaper Class="my-4 pa-2">
+        <MudStack Row="true">
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToCosts">Add To Costs</MudButton>
+            <MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="CancelCost">Cancel</MudButton>
+        </MudStack>
+    </MudPaper>
+    <MudDivider Class="mb-8"/>
+}
+
+
+<MudStack Row="true" AlignItems="AlignItems.Center">
+    <MudText Typo="Typo.h3" GutterBottom="false">Preparation Costs</MudText>
+    @if (_cost is null)
+    {
+        <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="NewCost">Add A New Cost</MudButton>
+
+            @* <MudPaper Class="ma-2 pa-2" > *@
+            @*     <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="NewCost">Add A New Cost</MudButton> *@
+            @* </MudPaper> *@
+    }
+</MudStack>
+
+
+<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
+<NonRecurringCostsDataGrid costs="@costs"/>
+
+
+<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
+<RecurringCostDataGrid costs="@recurringCosts"/>
+
+
+@* <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch> *@
+@* <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch> *@
+@* <MudText Class="mb-4">Current count: @currentCount</MudText> *@
+
+
+@code {
+
+    private ObservableCollection<Cost> costs { get; set; } = new();
+    private ObservableCollection<Cost> recurringCosts { get; set; } = new();
+    private Cost? _cost;
+
+    private bool _hidePosition;
+    private bool _loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //_assumptions = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        
+    }
+
+    private void AddToCosts()
+    {
+        if (string.IsNullOrWhiteSpace(_cost?.details.author) 
+            || string.IsNullOrWhiteSpace(_cost.details.text)
+            || string.IsNullOrWhiteSpace(_cost.details.title)) return;
+
+        if (_cost.recurring)
+        {
+            recurringCosts.Add( new Cost()
+            {
+                details = _cost.details,
+                amount = _cost.amount,
+                recurring = _cost.recurring,
+                basis = _cost.basis,
+                costType = CostType.Preparations,
+            });
+        }
+        else
+        {
+            costs.Add( new Cost()
+            {
+                details = _cost.details,
+                amount = _cost.amount,
+                recurring = _cost.recurring,
+                basis = _cost.basis,
+                costType = CostType.Preparations,
+            });
+        }
+        
+        _cost = new Cost();
+    }
+
+    private void NewCost()
+    {
+        _cost = new Cost();
+    }
+
+    private void CancelCost()
+    {
+        _cost = null;
+    }
+}

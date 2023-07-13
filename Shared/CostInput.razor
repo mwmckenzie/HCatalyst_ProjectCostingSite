@@ -1,0 +1,38 @@
+@using HCatalystProjectCostsSite.Models
+@using HCatalystProjectCostsSite.Enums
+@using HCatalystProjectCostsSite.Helpers
+
+<SubmissionInput submission="@cost.details"/>
+<br/>
+<MudNumericField @bind-Value="@cost.amount" 
+                 Label="Amount" 
+                 Format="F2" 
+                 Variant="Variant.Outlined" 
+                 Adornment="Adornment.Start" 
+                 AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+<br/>
+<MudStack Row="true">
+    <MudPaper Class="pa-2">
+        <MudSwitch @bind-Checked="@cost.recurring" Label="Recurring" Color="Color.Info" />
+    </MudPaper>
+    @if (cost.recurring)
+    {
+        <MudSelect T="Basis" Label="Basis" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.basis">
+            @foreach(var basis in Enum.GetValues<Basis>())
+            {
+                <MudSelectItem Value="basis"/>
+            }
+        </MudSelect>
+    }
+</MudStack>
+
+
+
+@code {
+
+    [Parameter]
+    public Cost cost { get; set; } = new();
+    
+    
+    
+}

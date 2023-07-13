@@ -1,0 +1,112 @@
+﻿@page "/assumptions"
+@using HCatalystProjectCostsSite.Models
+
+<PageTitle>Assumptions</PageTitle>
+<ColouredHeader headerText="Assumptions"/>
+
+<MudTable Items="@_assumptions.Take(8)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Submitted By</MudTh>
+        <MudTh>Submitted On</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.submission.title</MudTd>
+        <MudTd DataLabel="Description">@context.submission.text</MudTd>
+        <MudTd DataLabel="Submitted By">@context.submission.author</MudTd>
+        <MudTd DataLabel="Submitted On" HideSmall="_hidePosition">@context.submission.submittedOn</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<br/>
+
+<MudText Typo="Typo.h4" GutterBottom="true">New Assumption</MudText>
+<SubmissionInput submission="@_submission"/>
+
+<br/>
+
+<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToAssumptions">Add To Assumptions</MudButton>
+
+
+@* <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch> *@
+@* <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch> *@
+@* <MudText Class="mb-4">Current count: @currentCount</MudText> *@
+
+
+@code {
+    private int currentCount = 0;
+
+    private Submission _submission = new();
+
+    private bool _hidePosition;
+    private bool _loading;
+    private IEnumerable<Assumption>  _assumptions = new List<Assumption>();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        //_assumptions = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+
+        _assumptions = new List<Assumption>()
+        {
+            new Assumption
+            {
+                submission = new Submission
+                {
+                    title = "Assumption 1",
+                    text = "This is an assumption",
+                    author = "Richard",
+                    submittedOn = DateTime.UtcNow.ToShortDateString()
+                }
+            },
+            new Assumption
+            {
+                submission = new Submission
+                {
+                    title = "Assumption 2",
+                    text = "This is an assumption",
+                    author = "James",
+                    submittedOn = DateTime.UtcNow.ToShortDateString()
+                }
+            },
+            new Assumption
+            {
+                submission = new Submission
+                {
+                    title = "Assumption 3",
+                    text = "This is an assumption",
+                    author = "Dino",
+                    submittedOn = DateTime.UtcNow.ToShortDateString()
+                }
+            }
+        };
+    }
+
+    private void AddToAssumptions()
+    {
+        if (string.IsNullOrWhiteSpace(_submission.author) 
+            || string.IsNullOrWhiteSpace(_submission.text)
+            || string.IsNullOrWhiteSpace(_submission.title)) return;
+
+        
+        var newAssumption = new Assumption
+        {
+            submission = new Submission
+            {
+                title = _submission.title,
+                text = _submission.text,
+                author = _submission.author,
+                submittedOn = DateTime.UtcNow.ToShortDateString()
+            }
+        };
+        _assumptions = _assumptions.Append(newAssumption);
+
+        _submission = new Submission();
+        //_submission.author = _submission.title = _submission.text = "";
+    }
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

@@ -1,0 +1,31 @@
+@using HCatalystProjectCostsSite.Models
+@using System.Collections.ObjectModel
+@using HCatalystProjectCostsSite.Enums
+
+<MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+    <Columns>
+        <PropertyColumn Property="x => x.details.title" Title="Cost" />
+        <PropertyColumn Property="x => x.amount" Format="C"/>
+        <PropertyColumn Property="x => x.recurring" />
+        <PropertyColumn Property="x => x.basis" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    
+    [Parameter]
+    public ObservableCollection<Cost> costs { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        costs.Add(new Cost()
+        {
+            recurring = true,
+            amount = 100.10f,
+            basis = Basis.Annually,
+            details = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
+        });
+        
+    }
+
+}
