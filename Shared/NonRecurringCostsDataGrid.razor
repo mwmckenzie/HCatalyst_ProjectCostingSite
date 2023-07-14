@@ -1,13 +1,34 @@
 @using HCatalystProjectCostsSite.Models
 @using System.Collections.ObjectModel
 @using HCatalystProjectCostsSite.Enums
+@using HCatalystProjectCostsSite.Helpers
+@inject HttpClient httpClient;
+@inject ISnackbar snackbar
 
-<MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+<MudDataGrid T="Cost" Items="@costs" 
+             ReadOnly="false"
+             EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
+             StartedEditingItem="@StartedEditingItem"
+             Bordered="true" Dense="true"
+             EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
+    
     <Columns>
-        <PropertyColumn Property="x => x.submission.title" Title="Cost" />
-        <PropertyColumn Property="x => x.amount" Format="C"  Title="Amount" AggregateDefinition="_costAggregation"/>
-        <PropertyColumn Property="x => x.submission.author"  Title="Submitted By"/>
-        <PropertyColumn Property="x => x.submission.submittedOn"  Title="Submitted On"/>
+        <PropertyColumn Property="x => x.submission.title" Title="Cost"/>
+        <PropertyColumn Property="x => x.cost" Format="C" Title="Amount" AggregateDefinition="_costAggregation"/>
+        <PropertyColumn Property="x => x.submission.author" Title="Submitted By"/>
+        <PropertyColumn Property="x => x.submission.submittedOn" Title="Submitted On"/>
+        <TemplateColumn>
+            <CellTemplate>
+                <MudFab OnClick="@(() => context.Actions.StartEditingItemAsync())" Color="Color.Warning" 
+                        Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"/>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn>
+            <CellTemplate>
+                <MudFab OnClick="() => DeleteItem(context.Item)" Color="Color.Error" 
+                        Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small"/>
+            </CellTemplate>
+        </TemplateColumn>
     </Columns>
 </MudDataGrid>
 
@@ -16,26 +37,42 @@
     [Parameter]
     public ObservableCollection<Cost> costs { get; set; } = new();
     
+    private bool _isCellEditMode;
+    private List<string> _events = new();
+    private bool _editTriggerRowClick;
+    
     private AggregateDefinition<Cost> _costAggregation = new AggregateDefinition<Cost>
     {
         Type = AggregateType.Custom,
         CustomAggregate = x =>
         {
-            var total = x.Sum(y => y.amount);
+            var total = x.Sum(y => y.cost);
             return $"Total Cost is {total:C0}";
         }
     };
 
-    protected override void OnInitialized()
+    private void StartedEditingItem(Cost item)
     {
-        costs.Add(new Cost()
-        {
-            recurring = false,
-            amount = 100.10f,
-            basis = Basis.None,
-            submission = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
-        });
+        _events.Insert(0, $"Event = StartedEditingItem, Data = {System.Text.Json.JsonSerializer.Serialize(item)}");
+    }
+
+    private async void DeleteItem(Cost item)
+    {
+        snackbar.Add($"Deleting ID: {item.id}", Severity.Info);
         
+        if (!costs.Contains(item)) return;
+        costs.Remove(item);
+        var response = await httpClient.DeleteAsync(PathHelper.GetCostDeleteConnString(item.id));
+
+        if (response.IsSuccessStatusCode)
+        {
+            snackbar.Add($"Deleted ID: {item.id}", Severity.Success);
+        }
+        else
+        {
+            snackbar.Add($"Delete Failed ID: {item.id}", Severity.Error);
+        }
+        StateHasChanged();
     }
 
 }

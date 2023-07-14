@@ -1,8 +1,16 @@
 @using HCatalystProjectCostsSite.Models
+@using HCatalystProjectCostsSite.Enums
 
 <MudStack Row="true">
-    <MudTextField @bind-Value="@submission.title" Label="Title" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
-    <MudTextField @bind-Value="@submission.author" Label="Submitted By" Variant="Variant.Outlined" Margin="Margin.Dense"></MudTextField>
+    <MudSelect Variant="Variant.Outlined" T="Project" Label="Project" 
+               AnchorOrigin="Origin.BottomCenter" @bind-Value="@submission.project">
+            @foreach(var project in Enum.GetValues<Project>())
+            {
+                <MudSelectItem Value="project"/>
+            }
+        </MudSelect>
+    <MudTextField @bind-Value="@submission.title" Label="Title" Variant="Variant.Outlined" Margin="Margin.Dense"/>
+    <MudTextField @bind-Value="@submission.author" Label="Submitted By" Variant="Variant.Outlined" Margin="Margin.Dense"/>
 </MudStack>
 
 <MudTextField @bind-Value="@submission.text" Label="Description" Variant="Variant.Outlined" Lines="5" />

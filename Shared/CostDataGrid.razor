@@ -5,7 +5,7 @@
 <MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
         <PropertyColumn Property="x => x.submission.title" Title="Cost" />
-        <PropertyColumn Property="x => x.amount" Format="C"/>
+        <PropertyColumn Property="x => x.cost" Format="C"/>
         <PropertyColumn Property="x => x.recurring" />
         <PropertyColumn Property="x => x.basis" />
     </Columns>
@@ -20,8 +20,7 @@
     {
         costs.Add(new Cost()
         {
-            recurring = true,
-            amount = 100.10f,
+            cost = 100.10m,
             basis = Basis.Annually,
             submission = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
         });

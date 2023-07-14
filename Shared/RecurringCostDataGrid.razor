@@ -5,7 +5,7 @@
 <MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
         <PropertyColumn Property="x => x.submission.title" Title="Cost" />
-        <PropertyColumn Property="x => x.amount" Format="C"  Title="Amount"/>
+        <PropertyColumn Property="x => x.cost" Format="C"  Title="Amount"/>
         <PropertyColumn Property="x => x.basis"  Title="Basis"/>
         <PropertyColumn Property="x => x.AnnualCost()" Title="Annual Cost"  
                         Format="C" AggregateDefinition="_costAggregation"/>
@@ -19,17 +19,6 @@
     [Parameter]
     public ObservableCollection<Cost> costs { get; set; } = new();
 
-    protected override void OnInitialized()
-    {
-        costs.Add(new Cost()
-        {
-            recurring = true,
-            amount = 100.10f,
-            basis = Basis.Annually,
-            submission = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
-        });
-    }
-    
     private AggregateDefinition<Cost> _costAggregation = new AggregateDefinition<Cost>
     {
         Type = AggregateType.Custom,

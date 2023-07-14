@@ -19,7 +19,6 @@ namespace HCatalystProjectCostsSite.Models;
 
 public class Assumption
 {
+    public string id { get; set; } = Guid.NewGuid().ToString();
     public Submission submission { get; set; } = new();
-    
-    public string id => submission.id;
 }

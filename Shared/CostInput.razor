@@ -1,30 +1,40 @@
 @using HCatalystProjectCostsSite.Models
 @using HCatalystProjectCostsSite.Enums
 @using HCatalystProjectCostsSite.Helpers
+@using MudBlazor.Extensions
 
 <SubmissionInput submission="@cost.submission"/>
-<br/>
-<MudNumericField @bind-Value="@cost.amount" 
-                 Label="Amount" 
-                 Format="F2" 
-                 Variant="Variant.Outlined" 
-                 Adornment="Adornment.Start" 
-                 AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
-<br/>
+
+<MudNumericField Class="my-4"
+    @bind-Value="@cost.cost"
+    Label="Amount" 
+    Format="F2" 
+    Variant="Variant.Outlined" 
+    Adornment="Adornment.Start" 
+    AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+
 <MudStack Row="true">
+    <MudSelect T="Basis" Label="Basis" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.basis">
+        @foreach(var basis in Enum.GetValues<Basis>())
+        {
+            <MudSelectItem Value="basis"/>
+        }
+    </MudSelect>
     <MudPaper Class="pa-2">
-        <MudSwitch @bind-Checked="@cost.recurring" Label="Recurring" Color="Color.Info" />
+        <MudSwitch Checked="cost.recurring" Label="Recurring" Color="Color.Info" />
     </MudPaper>
-    @if (cost.recurring)
-    {
-        <MudSelect T="Basis" Label="Basis" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.basis">
-            @foreach(var basis in Enum.GetValues<Basis>())
-            {
-                <MudSelectItem Value="basis"/>
-            }
-        </MudSelect>
-    }
 </MudStack>
+
+@if (cost.recurring)
+{
+    <MudNumericField Class="my-4"
+        @bind-Value="@cost.costRecurring"
+        Label="Amount" 
+        Format="F2" 
+        Variant="Variant.Outlined" 
+        Adornment="Adornment.Start" 
+        AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+}
 
 
 
@@ -32,7 +42,6 @@
 
     [Parameter]
     public Cost cost { get; set; } = new();
-    
     
     
 }

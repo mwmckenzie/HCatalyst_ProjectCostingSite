@@ -1,0 +1,28 @@
+﻿@using HCatalystProjectCostsSite.Models
+
+<MudDrawer @bind-Open="@isOpen" 
+           Width="40%" 
+           Height="100%" 
+           Anchor="Anchor.Right" 
+           Elevation="1" 
+           Variant="@DrawerVariant.Temporary">
+    <MudPaper Class="ma-8 pa-8">
+        <CostInput cost="cost"/>
+        <MudButton Variant="Variant.Outlined" OnClick="onSubmitClickCallback">Submit</MudButton>
+    </MudPaper>
+</MudDrawer>
+
+@code {
+
+    [Parameter]
+    public bool isOpen { get; set; }
+
+    [Parameter]
+    public Cost cost { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<MouseEventArgs> onSubmitClickCallback { get; set; }
+    
+    
+
+}

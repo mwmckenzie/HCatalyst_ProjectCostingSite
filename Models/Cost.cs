@@ -21,41 +21,44 @@ namespace HCatalystProjectCostsSite.Models;
 
 public class Cost
 {
-    
+    public string id { get; set; } = Guid.NewGuid().ToString();
     public Submission submission { get; set; } = new();
-    public float amount { get; set; }
-    public bool recurring { get; set; }
+    public decimal cost { get; set; }
+    public decimal costRecurring { get; set; }
+    public Currency currency { get; set; } = Currency.USD;
     public Basis basis { get; set; }
-    public CostType costType { get; set; }
+    public CostPhase costPhase { get; set; }
+    // public float cost { get; set; }
+    // public float costRecurring { get; set; }
 
-    public string id => submission.id;
+    public bool recurring => basis > Basis.None;
     
-    public float AnnualCost()
+    public decimal AnnualCost()
     {
         switch (basis)
         {
             case Basis.Annually:
-                return amount;
+                return costRecurring;
             case Basis.BiAnnually:
-                return amount * 2f;
+                return costRecurring * 2m;
             case Basis.Quarterly:
-                return amount * 4f;
+                return costRecurring * 4m;
             case Basis.Monthly:
-                return amount * 12f;
+                return costRecurring * 12m;
             case Basis.BiMonthly:
-                return amount * 24f;
+                return costRecurring * 24m;
             case Basis.Weekly:
-                return amount * 52f;
+                return costRecurring * 52m;
             case Basis.Daily:
-                return amount * 365f;
+                return costRecurring * 365m;
             case Basis.Hourly:
-                return amount * 365f * 24f;
+                return costRecurring * 365m * 24m;
         }
-        return 0f;
+        return 0m;
     }
 
-    public float CostOverPeriod(int years)
+    public decimal CostOverPeriod(decimal years)
     {
-        return AnnualCost() * years;
+        return cost + AnnualCost() * years;
     }
 }

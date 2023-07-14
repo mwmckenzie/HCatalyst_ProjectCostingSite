@@ -6,21 +6,21 @@
 @inject HttpClient httpClient;
 @inject ISnackbar _snackbar
 
-<PageTitle>Preparations</PageTitle>
-<ColouredHeader headerText="Preparations"/>
+<PageTitle>Preparation</PageTitle>
+<ColouredHeader headerText="Preparation"/>
 
-@if(_cost is not null)
-{
-    <MudText Typo="Typo.h4" GutterBottom="true">New Cost</MudText>
-    <CostInput cost="@_cost"/>
-    <MudPaper Class="my-4 pa-2">
-        <MudStack Row="true">
-            <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToCosts">Add To Costs</MudButton>
-            <MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="CancelCost">Cancel</MudButton>
-        </MudStack>
-    </MudPaper>
-    <MudDivider Class="mb-8"/>
-}
+@* @if(_cost is not null) *@
+@* { *@
+@*     <MudText Typo="Typo.h4" GutterBottom="true">New Cost</MudText> *@
+@*     <CostInput cost="@_cost"/> *@
+@*     <MudPaper Class="my-4 pa-2"> *@
+@*         <MudStack Row="true"> *@
+@*             <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToCosts">Add To Costs</MudButton> *@
+@*             <MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="CancelCost">Cancel</MudButton> *@
+@*         </MudStack> *@
+@*     </MudPaper> *@
+@*     <MudDivider Class="mb-8"/> *@
+@* } *@
 
 
 <MudStack Row="true" AlignItems="AlignItems.Center">
@@ -39,21 +39,25 @@
 <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
 <NonRecurringCostsDataGrid costs="@costs"/>
 
-
-<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
+<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Recurring Costs</MudText>
 <RecurringCostDataGrid costs="@recurringCosts"/>
 
+<MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => _costSideViewIsOpen = true"/>
+<CostInputSideView cost="@_costSideView" isOpen="_costSideViewIsOpen" onSubmitClickCallback="Callback"/>
 
+@* <MudButton Variant="Variant.Outlined" Class="mt-16" OnClick="() => _costSideViewIsOpen = true">Open Side Cost</MudButton> *@
 @* <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch> *@
 @* <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch> *@
 @* <MudText Class="mb-4">Current count: @currentCount</MudText> *@
-
 
 @code {
 
     private ObservableCollection<Cost> costs { get; set; } = new();
     private ObservableCollection<Cost> recurringCosts { get; set; } = new();
     private Cost? _cost;
+
+    private Cost _costSideView = new();
+    private bool _costSideViewIsOpen = false;
 
     private bool _hidePosition;
     private bool _loading;
@@ -69,25 +73,11 @@
         {
             if (loadedCost.recurring)
             {
-                recurringCosts.Add( new Cost()
-                {
-                    submission = loadedCost.submission,
-                    amount = loadedCost.amount,
-                    recurring = loadedCost.recurring,
-                    basis = loadedCost.basis,
-                    costType = CostType.Preparations,
-                });
+                recurringCosts.Add(loadedCost);
             }
             else
             {
-                costs.Add( new Cost()
-                {
-                    submission = loadedCost.submission,
-                    amount = loadedCost.amount,
-                    recurring = loadedCost.recurring,
-                    basis = loadedCost.basis,
-                    costType = CostType.Preparations,
-                });
+                costs.Add(loadedCost);
             }
         }
         
@@ -98,6 +88,8 @@
         if (string.IsNullOrWhiteSpace(_cost?.submission.author) 
             || string.IsNullOrWhiteSpace(_cost.submission.text)
             || string.IsNullOrWhiteSpace(_cost.submission.title)) return;
+        
+        
         
         var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _cost);
 
@@ -112,25 +104,11 @@
 
         if (_cost.recurring)
         {
-            recurringCosts.Add( new Cost()
-            {
-                submission = _cost.submission,
-                amount = _cost.amount,
-                recurring = _cost.recurring,
-                basis = _cost.basis,
-                costType = CostType.Preparations,
-            });
+            recurringCosts.Add(_cost);
         }
         else
         {
-            costs.Add( new Cost()
-            {
-                submission = _cost.submission,
-                amount = _cost.amount,
-                recurring = _cost.recurring,
-                basis = _cost.basis,
-                costType = CostType.Preparations,
-            });
+            costs.Add(_cost);
         }
         
         _cost = new Cost();
@@ -156,4 +134,38 @@
             config.Onclick = _ => Task.CompletedTask;
         });
     }
+
+    private async void Callback()
+    {
+        if (string.IsNullOrWhiteSpace(_costSideView?.submission.author) 
+            || string.IsNullOrWhiteSpace(_costSideView.submission.text)
+            || string.IsNullOrWhiteSpace(_costSideView.submission.title)) return;
+        
+        
+        
+        var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _costSideView);
+
+        if (response.IsSuccessStatusCode)
+        {
+            AddSnackBarUpdate("Upload to DB Success");
+        }
+        else
+        {
+            AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
+        }
+
+        if (_costSideView.recurring)
+        {
+            recurringCosts.Add(_costSideView);
+        }
+        else
+        {
+            costs.Add(_costSideView);
+        }
+        
+        _costSideView = new Cost();
+        
+        StateHasChanged();
+    }
+
 }

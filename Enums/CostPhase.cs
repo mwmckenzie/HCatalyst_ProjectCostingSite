@@ -1,4 +1,4 @@
-// HCatalyst_ProjectCostingSite -- CostType.cs
+// HCatalyst_ProjectCostingSite -- CostPhase.cs
 // 
 // Copyright (C) 2023 Matthew W. McKenzie and Kenz LLC
 // 
@@ -17,14 +17,13 @@
 
 namespace HCatalystProjectCostsSite.Enums;
 
-public enum CostType
+public enum CostPhase
 {
     NonAttributed,
-    Preparations,
+    Preparation,
     Recruiting,
-    Grouping,
-    Ideation,
-    Selection,
-    Demo,
+    Formation,
+    Development,
+    Conversion,
     Cultivation,
 }

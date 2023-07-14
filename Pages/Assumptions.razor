@@ -7,6 +7,8 @@
 <PageTitle>Assumptions</PageTitle>
 <ColouredHeader headerText="Assumptions"/>
 
+<MudText>@_json</MudText>
+
 <MudTable Items="@_assumptions.Take(8)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
         <MudTh>Title</MudTh>
@@ -40,6 +42,8 @@
 @code {
     private int currentCount = 0;
 
+    private string _json = "Response Text";
+
     private Submission _submission = new();
 
     private bool _hidePosition;
@@ -48,43 +52,7 @@
     
     protected override async Task OnInitializedAsync()
     {
-        //_assumptions = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
-
         _assumptions = await httpClient.GetFromJsonAsync<List<Assumption>>(PathHelper.assumptionsGetConnString);
-
-        // _assumptions = new List<Assumption>()
-        // {
-        //     new Assumption
-        //     {
-        //         submission = new Submission
-        //         {
-        //             title = "Assumption 1",
-        //             text = "This is an assumption",
-        //             author = "Richard",
-        //             submittedOn = DateTime.UtcNow.ToShortDateString()
-        //         }
-        //     },
-        //     new Assumption
-        //     {
-        //         submission = new Submission
-        //         {
-        //             title = "Assumption 2",
-        //             text = "This is an assumption",
-        //             author = "James",
-        //             submittedOn = DateTime.UtcNow.ToShortDateString()
-        //         }
-        //     },
-        //     new Assumption
-        //     {
-        //         submission = new Submission
-        //         {
-        //             title = "Assumption 3",
-        //             text = "This is an assumption",
-        //             author = "Dino",
-        //             submittedOn = DateTime.UtcNow.ToShortDateString()
-        //         }
-        //     }
-        // };
     }
 
     private async void AddToAssumptions()
@@ -110,6 +78,8 @@
         
         var response = await httpClient.PostAsJsonAsync(PathHelper.assumptionPostConnString, newAssumption);
 
+        _json = response.RequestMessage?.Content?.ReadAsStringAsync().Result ?? string.Empty;
+
         if (response.IsSuccessStatusCode)
         {
             AddSnackBarUpdate("Upload to DB Success");
@@ -118,6 +88,8 @@
         {
             AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
         }
+        
+        StateHasChanged();
     }
 
     private void IncrementCount()
