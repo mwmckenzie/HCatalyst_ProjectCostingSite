@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gElnO9DHpzfwR5UFWF+aKVr79YWrbp2VZHSj3fhBaKQBqdXubOANxc03ZAeDlLzdTv3SvWzgb1x3R/UuuAD2KA==",
+  "dgSpecHash": "w2eUA6p/rg/fQcpC2rol3n38hqCZ6TInLZli87GmfurxcbB2HNTqAsFBvBBxFgAVNQNn1vcuJanlx7W9fFWVdw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\HCatalystProjectCostsSite.csproj",
   "expectedPackageFiles": [
@@ -36,7 +36,7 @@
     "C:\\Users\\Matt\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "C:\\Users\\Matt\\.nuget\\packages\\system.text.encodings.web\\6.0.0\\system.text.encodings.web.6.0.0.nupkg.sha512",
     "C:\\Users\\Matt\\.nuget\\packages\\system.text.json\\6.0.0\\system.text.json.6.0.0.nupkg.sha512",
-    "C:\\Users\\Matt\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\6.0.14\\microsoft.netcore.app.runtime.mono.browser-wasm.6.0.14.nupkg.sha512"
+    "C:\\Users\\Matt\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\6.0.20\\microsoft.netcore.app.runtime.mono.browser-wasm.6.0.20.nupkg.sha512"
   ],
   "logs": []
 }

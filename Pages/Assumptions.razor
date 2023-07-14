@@ -1,5 +1,8 @@
 ﻿@page "/assumptions"
 @using HCatalystProjectCostsSite.Models
+@using HCatalystProjectCostsSite.Helpers
+@inject HttpClient httpClient;
+@inject ISnackbar _snackbar
 
 <PageTitle>Assumptions</PageTitle>
 <ColouredHeader headerText="Assumptions"/>
@@ -41,48 +44,50 @@
 
     private bool _hidePosition;
     private bool _loading;
-    private IEnumerable<Assumption>  _assumptions = new List<Assumption>();
+    private IEnumerable<Assumption>?  _assumptions = new List<Assumption>();
     
     protected override async Task OnInitializedAsync()
     {
         //_assumptions = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
 
-        _assumptions = new List<Assumption>()
-        {
-            new Assumption
-            {
-                submission = new Submission
-                {
-                    title = "Assumption 1",
-                    text = "This is an assumption",
-                    author = "Richard",
-                    submittedOn = DateTime.UtcNow.ToShortDateString()
-                }
-            },
-            new Assumption
-            {
-                submission = new Submission
-                {
-                    title = "Assumption 2",
-                    text = "This is an assumption",
-                    author = "James",
-                    submittedOn = DateTime.UtcNow.ToShortDateString()
-                }
-            },
-            new Assumption
-            {
-                submission = new Submission
-                {
-                    title = "Assumption 3",
-                    text = "This is an assumption",
-                    author = "Dino",
-                    submittedOn = DateTime.UtcNow.ToShortDateString()
-                }
-            }
-        };
+        _assumptions = await httpClient.GetFromJsonAsync<List<Assumption>>(PathHelper.assumptionsGetConnString);
+
+        // _assumptions = new List<Assumption>()
+        // {
+        //     new Assumption
+        //     {
+        //         submission = new Submission
+        //         {
+        //             title = "Assumption 1",
+        //             text = "This is an assumption",
+        //             author = "Richard",
+        //             submittedOn = DateTime.UtcNow.ToShortDateString()
+        //         }
+        //     },
+        //     new Assumption
+        //     {
+        //         submission = new Submission
+        //         {
+        //             title = "Assumption 2",
+        //             text = "This is an assumption",
+        //             author = "James",
+        //             submittedOn = DateTime.UtcNow.ToShortDateString()
+        //         }
+        //     },
+        //     new Assumption
+        //     {
+        //         submission = new Submission
+        //         {
+        //             title = "Assumption 3",
+        //             text = "This is an assumption",
+        //             author = "Dino",
+        //             submittedOn = DateTime.UtcNow.ToShortDateString()
+        //         }
+        //     }
+        // };
     }
 
-    private void AddToAssumptions()
+    private async void AddToAssumptions()
     {
         if (string.IsNullOrWhiteSpace(_submission.author) 
             || string.IsNullOrWhiteSpace(_submission.text)
@@ -99,14 +104,35 @@
                 submittedOn = DateTime.UtcNow.ToShortDateString()
             }
         };
-        _assumptions = _assumptions.Append(newAssumption);
-
+        
+        _assumptions = _assumptions?.Append(newAssumption);
         _submission = new Submission();
-        //_submission.author = _submission.title = _submission.text = "";
+        
+        var response = await httpClient.PostAsJsonAsync(PathHelper.assumptionPostConnString, newAssumption);
+
+        if (response.IsSuccessStatusCode)
+        {
+            AddSnackBarUpdate("Upload to DB Success");
+        }
+        else
+        {
+            AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
+        }
     }
 
     private void IncrementCount()
     {
         currentCount++;
     }
+    private void AddSnackBarUpdate(string text, Severity severity = Severity.Success) {
+        _snackbar.Clear();
+        _snackbar.Add(text, severity, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseAfterNavigation = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = _ => Task.CompletedTask;
+        });
+    }
+    
 }

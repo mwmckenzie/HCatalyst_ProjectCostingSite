@@ -4,13 +4,13 @@
 
 <MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
-        <PropertyColumn Property="x => x.details.title" Title="Cost" />
+        <PropertyColumn Property="x => x.submission.title" Title="Cost" />
         <PropertyColumn Property="x => x.amount" Format="C"  Title="Amount"/>
         <PropertyColumn Property="x => x.basis"  Title="Basis"/>
         <PropertyColumn Property="x => x.AnnualCost()" Title="Annual Cost"  
                         Format="C" AggregateDefinition="_costAggregation"/>
-        <PropertyColumn Property="x => x.details.author"  Title="Submitted By"/>
-        <PropertyColumn Property="x => x.details.submittedOn"  Title="Submitted On"/>
+        <PropertyColumn Property="x => x.submission.author"  Title="Submitted By"/>
+        <PropertyColumn Property="x => x.submission.submittedOn"  Title="Submitted On"/>
     </Columns>
 </MudDataGrid>
 
@@ -26,7 +26,7 @@
             recurring = true,
             amount = 100.10f,
             basis = Basis.Annually,
-            details = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
+            submission = new Submission { title = "test", text = "text", author = "author", submittedOn = "10/10/1999" }
         });
     }
     

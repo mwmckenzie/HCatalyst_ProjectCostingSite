@@ -2,7 +2,9 @@
 @using HCatalystProjectCostsSite.Models
 @using System.Collections.ObjectModel
 @using HCatalystProjectCostsSite.Enums
-
+@using HCatalystProjectCostsSite.Helpers
+@inject HttpClient httpClient;
+@inject ISnackbar _snackbar
 
 <PageTitle>Preparations</PageTitle>
 <ColouredHeader headerText="Preparations"/>
@@ -59,20 +61,60 @@
     protected override async Task OnInitializedAsync()
     {
         //_assumptions = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        var loadedCosts = await httpClient.GetFromJsonAsync<List<Cost>>(PathHelper.costsGetConnString);
+
+        if (loadedCosts is null) return;
+
+        foreach (var loadedCost in loadedCosts)
+        {
+            if (loadedCost.recurring)
+            {
+                recurringCosts.Add( new Cost()
+                {
+                    submission = loadedCost.submission,
+                    amount = loadedCost.amount,
+                    recurring = loadedCost.recurring,
+                    basis = loadedCost.basis,
+                    costType = CostType.Preparations,
+                });
+            }
+            else
+            {
+                costs.Add( new Cost()
+                {
+                    submission = loadedCost.submission,
+                    amount = loadedCost.amount,
+                    recurring = loadedCost.recurring,
+                    basis = loadedCost.basis,
+                    costType = CostType.Preparations,
+                });
+            }
+        }
         
     }
 
-    private void AddToCosts()
+    private async void AddToCosts()
     {
-        if (string.IsNullOrWhiteSpace(_cost?.details.author) 
-            || string.IsNullOrWhiteSpace(_cost.details.text)
-            || string.IsNullOrWhiteSpace(_cost.details.title)) return;
+        if (string.IsNullOrWhiteSpace(_cost?.submission.author) 
+            || string.IsNullOrWhiteSpace(_cost.submission.text)
+            || string.IsNullOrWhiteSpace(_cost.submission.title)) return;
+        
+        var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _cost);
+
+        if (response.IsSuccessStatusCode)
+        {
+            AddSnackBarUpdate("Upload to DB Success");
+        }
+        else
+        {
+            AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
+        }
 
         if (_cost.recurring)
         {
             recurringCosts.Add( new Cost()
             {
-                details = _cost.details,
+                submission = _cost.submission,
                 amount = _cost.amount,
                 recurring = _cost.recurring,
                 basis = _cost.basis,
@@ -83,7 +125,7 @@
         {
             costs.Add( new Cost()
             {
-                details = _cost.details,
+                submission = _cost.submission,
                 amount = _cost.amount,
                 recurring = _cost.recurring,
                 basis = _cost.basis,
@@ -102,5 +144,16 @@
     private void CancelCost()
     {
         _cost = null;
+    }
+    
+    private void AddSnackBarUpdate(string text, Severity severity = Severity.Success) {
+        _snackbar.Clear();
+        _snackbar.Add(text, severity, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseAfterNavigation = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = _ => Task.CompletedTask;
+        });
     }
 }
