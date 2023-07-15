@@ -21,7 +21,7 @@ public enum CostPhase
 {
     NonAttributed,
     Preparation,
-    Recruiting,
+    Gathering,
     Formation,
     Development,
     Conversion,

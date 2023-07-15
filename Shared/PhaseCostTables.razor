@@ -1,0 +1,169 @@
+﻿@using HCatalystProjectCostsSite.Models
+@using System.Collections.ObjectModel
+@using HCatalystProjectCostsSite.Enums
+@using HCatalystProjectCostsSite.Helpers
+@using HCatalystProjectCostsSite.Services
+@inject HttpClient httpClient;
+@inject ISnackbar _snackbar
+@inject ConversionService conversionService;
+
+<PageTitle>@costPhase</PageTitle>
+
+<DividerHeader headerText="@costPhase.ToString()"/>
+
+<MudStack Row="true" AlignItems="AlignItems.Center">
+    <MudText Typo="Typo.h3" GutterBottom="false">@costPhase Costs</MudText>
+</MudStack>
+
+<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
+<RecurringCostDataGrid costs="@costs" onEditClickCallback="OnCostEditClicked"/>
+
+<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Recurring Costs</MudText>
+<RecurringCostDataGrid costs="@recurringCosts" onEditClickCallback="OnCostEditClicked"/>
+
+<MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
+        OnClick="() => _costSideViewIsOpen = true"/>
+<CostInputSideView cost="@_costSideView" isOpen="_costSideViewIsOpen" onSubmitClickCallback="SubmitCostCallback" 
+                   onCancelClickCallback="CancelCostCallback" isNew="_sideViewCostIsNew"/>
+
+@code {
+
+    [Parameter]
+    public CostPhase costPhase { get; set; }
+    
+    private ObservableCollection<Cost> costs { get; set; } = new();
+    private ObservableCollection<Cost> recurringCosts { get; set; } = new();
+    private Cost? _cost;
+
+    private Cost _costSideView = new();
+    private bool _costSideViewIsOpen = false;
+    private bool _sideViewCostIsNew = true;
+
+    private bool _hidePosition;
+    private bool _loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCosts();
+    }
+
+    private async Task LoadCosts()
+    {
+        recurringCosts.Clear();
+        costs.Clear();
+        
+        var loadedCosts = await httpClient.GetFromJsonAsync<List<Cost>>(PathHelper.costsGetConnString);
+
+        if (loadedCosts is null) return;
+
+        foreach (var loadedCost in loadedCosts.Where(x => x.costPhase == costPhase))
+        {
+            loadedCost.SetRates(conversionService.conversionRates);
+            if (loadedCost.recurring)
+            {
+                recurringCosts.Add(loadedCost);
+            }
+            else
+            {
+                costs.Add(loadedCost);
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void OnCostEditClicked(Cost obj)
+    {
+        _sideViewCostIsNew = false;
+        _costSideViewIsOpen = true;
+        _costSideView = obj;
+    }
+
+    private async void AddToCosts()
+    {
+        if (string.IsNullOrWhiteSpace(_cost?.submission.text)
+            || string.IsNullOrWhiteSpace(_cost.submission.title)) return;
+        
+        //var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _cost);
+        
+        _cost.costPhase = costPhase;
+        
+        var path = PathHelper.TemplateCostConnString(_cost.id, PathHelper.costUpsertByIdSuffix);
+        var response = await httpClient.PutAsJsonAsync(path, _cost);
+
+        if (response.IsSuccessStatusCode)
+        {
+            AddSnackBarUpdate("Upload to DB Success");
+        }
+        else
+        {
+            AddSnackBarUpdate(response.ReasonPhrase ?? "Failed To Upload", Severity.Error);
+        }
+
+        if (_cost.recurring)
+        {
+            recurringCosts.Add(_cost);
+        }
+        else
+        {
+            costs.Add(_cost);
+        }
+        
+        _cost = new Cost();
+    }
+
+    private void NewCost()
+    {
+        _cost = new Cost();
+    }
+
+    private void CancelCost()
+    {
+        _cost = null;
+    }
+    
+    private void AddSnackBarUpdate(string text, Severity severity = Severity.Success) {
+        _snackbar.Clear();
+        _snackbar.Add(text, severity, config =>
+        {
+            config.RequireInteraction = true;
+            config.CloseAfterNavigation = true;
+            config.ShowCloseIcon = false;
+            config.Onclick = _ => Task.CompletedTask;
+        });
+    }
+
+    private async void SubmitCostCallback()
+    {
+        if (string.IsNullOrWhiteSpace(_costSideView.submission.text)
+            || string.IsNullOrWhiteSpace(_costSideView.submission.title)) return;
+
+        _costSideView.costPhase = costPhase;
+        
+        var response = await httpClient.PutAsJsonAsync(
+            PathHelper.UpsertCostByIdConnString(_costSideView.id), _costSideView);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            AddSnackBarUpdate("Upload to DB Success");
+        }
+        else
+        {
+            AddSnackBarUpdate(response.StatusCode.ToString(), Severity.Error);
+        }
+        
+        _costSideView = new Cost();
+        _costSideViewIsOpen = false;
+        _sideViewCostIsNew = true;
+        StateHasChanged();
+
+        await LoadCosts(); 
+    }
+
+    private void CancelCostCallback()
+    {
+        _costSideView = new Cost();
+        _costSideViewIsOpen = false;
+        _sideViewCostIsNew = true;
+    }
+    
+}

@@ -1,7 +1,15 @@
-﻿<MudNavMenu>
+﻿
+<MudNavMenu Color="Color.Primary" Bordered="true">
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
     <MudNavLink Href="assumptions" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Assumptions</MudNavLink>
-   <MudNavLink Href="preparations" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Preparation</MudNavLink>
+    <MudNavGroup Expanded="true" Title="Phases">
+        <MudNavLink Href="preparation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Preparation</MudNavLink>
+        <MudNavLink Href="gathering" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Gathering</MudNavLink>
+        <MudNavLink Href="formation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Formation</MudNavLink>
+        <MudNavLink Href="development" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Development</MudNavLink>
+        <MudNavLink Href="conversion" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Conversion</MudNavLink>
+        <MudNavLink Href="cultivation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Cultivation</MudNavLink>
+    </MudNavGroup>
       
     @* <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink> *@
 </MudNavMenu>

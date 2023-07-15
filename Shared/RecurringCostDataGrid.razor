@@ -13,7 +13,7 @@
         <PropertyColumn Property="x => x.costRecurring" Format="F2"  Title="Recurring Amount"/>
         <PropertyColumn Property="x => x.basis"  Title="Basis"/>
         <PropertyColumn Property="x => x.CostTotalInUsd()" Title="Total Cost (USD)"  
-                        Format="C" AggregateDefinition="_costAggregation"/>
+                            Format="C" AggregateDefinition="_costAggregation" />
         <PropertyColumn Property="x => x.basisCount"  Title="Basis Count"/>
         <PropertyColumn Property="x => x.associatedRoleCount"  Title="Role Count"/>
         <PropertyColumn Property="x => x.EventCount"  Title="Event Count"/>
@@ -27,7 +27,6 @@
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
-        
     </Columns>
 </MudDataGrid>
 
@@ -44,8 +43,9 @@
         Type = AggregateType.Custom,
         CustomAggregate = x =>
         {
-            var total = x.Sum(y => y.CostTotalInUsd());
-            return $"Total Annual Cost is {total:C0}";
+            var enumerable = x.ToList();
+            var total = enumerable.Sum(y => y.CostTotalInUsd());
+            return !enumerable.Any() ? "No Cost" : $"Total Annual Cost is {total:C0}";
         }
     };
     
