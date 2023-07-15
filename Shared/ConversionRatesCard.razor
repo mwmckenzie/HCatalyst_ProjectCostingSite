@@ -1,0 +1,65 @@
+﻿@using HCatalystProjectCostsSite.Models
+@using HCatalystProjectCostsSite.Services
+@inject HttpClient httpClient
+@inject ConversionService conversionService
+
+@if (conversionService.conversionRates is not null)
+{
+    <MudCard Style="max-width: 250px">
+        <MudCardHeader>
+            <MudText Typo="Typo.h6">Latest Conversion Rates</MudText>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudText>USD to GBP:</MudText>
+                <MudText Color="Color.Primary" Style="font-weight: bold">@usdToGbp</MudText>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudText>GBP to USD:</MudText>
+                <MudText Color="Color.Primary" Style="font-weight: bold">@GbpToUsd</MudText>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudText>USD to EUR:</MudText>
+                <MudText Color="Color.Primary" Style="font-weight: bold">@usdToEur</MudText>
+            </MudStack>
+            <MudStack Row="true" Justify="Justify.SpaceBetween">
+                <MudText>EUR to USD:</MudText>
+                <MudText Color="Color.Primary" Style="font-weight: bold">@eurToUsd</MudText>
+            </MudStack>
+            <MudText Class="mt-4" Color="Color.Info">Updated: @ratesDate</MudText>
+        </MudCardContent>
+    </MudCard>
+}
+
+@code
+{
+    private string ratesDate { get; set; } = "UNK";
+    private string eurToUsd { get; set; } = "UNK";
+    private string usdToEur { get; set; } = "UNK";
+    private string usdToGbp { get; set; } = "UNK";
+    private string GbpToUsd { get; set; } = "UNK";
+
+    private ConversionRates? _conversionRates;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // _conversionRates = 
+        //     await httpClient.GetFromJsonAsync<ConversionRates>("sample-data/conversionrates.json");
+
+        while (conversionService.conversionRates is null)
+        {
+            await Task.Delay(250);
+        }
+
+        _conversionRates = conversionService.conversionRates;
+        
+        if (_conversionRates is null) return;
+
+        eurToUsd = _conversionRates.eurToUsd.ToString("N2");
+        usdToEur = _conversionRates.usdToEur.ToString("N2");
+        usdToGbp = _conversionRates.usdToGbp.ToString("N2");
+        GbpToUsd = _conversionRates.GbpToUsd.ToString("N2");
+
+        ratesDate = _conversionRates.date;
+    }
+}

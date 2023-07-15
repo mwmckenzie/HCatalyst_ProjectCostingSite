@@ -5,28 +5,36 @@
 @inject HttpClient httpClient;
 @inject ISnackbar snackbar
 
-<MudDataGrid T="Cost" Items="@costs" 
-             ReadOnly="false"
+<MudDataGrid T="Cost" Items="@costs" ReadOnly="false" 
              EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
-             StartedEditingItem="@StartedEditingItem"
-             Bordered="true" Dense="true"
-             EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
-    
+             StartedEditingItem="@StartedEditingItem" Bordered="true" Dense="true"
+             EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)"
+             RowStyleFunc="@_rowStyleFunc">
+
+    <ColGroup>
+        <col />
+        <col />
+        <col />
+        <col />
+        <col style="width: 3%; justify-content: center;"/>
+    </ColGroup>
     <Columns>
         <PropertyColumn Property="x => x.submission.title" Title="Cost"/>
-        <PropertyColumn Property="x => x.cost" Format="C" Title="Amount" AggregateDefinition="_costAggregation"/>
+        <PropertyColumn Property="x => x.costInitial" Format="C" Title="Amount" AggregateDefinition="_costAggregation"/>
         <PropertyColumn Property="x => x.submission.author" Title="Submitted By"/>
         <PropertyColumn Property="x => x.submission.submittedOn" Title="Submitted On"/>
-        <TemplateColumn>
+        <TemplateColumn CellClass="clm-row-small">
             <CellTemplate>
-                <MudFab OnClick="@(() => context.Actions.StartEditingItemAsync())" Color="Color.Warning" 
-                        Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"/>
-            </CellTemplate>
-        </TemplateColumn>
-        <TemplateColumn>
-            <CellTemplate>
-                <MudFab OnClick="() => DeleteItem(context.Item)" Color="Color.Error" 
-                        Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small"/>
+                <MudStack Row="true" Spacing="2" Justify="Justify.Center">
+                    <MudIconButton OnClick="() => EditItem(context.Item)" Color="Color.Info" Variant="Variant.Filled"
+                                   Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" />
+                    <MudIconButton OnClick="() => DeleteItem(context.Item)" Color="Color.Error" Variant="Variant.Filled"
+                                   Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" />
+                </MudStack>
+                    @* <MudFab OnClick="() => EditItem(context.Item)" Color="Color.Warning" *@
+                    @*         Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"/> *@
+                    @* <MudFab OnClick="@(() => context.Actions.StartEditingItemAsync())" Color="Color.Warning" *@
+                    @*         Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"/> *@
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -36,6 +44,9 @@
     
     [Parameter]
     public ObservableCollection<Cost> costs { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<Cost> onEditClickCallback { get; set; }
     
     private bool _isCellEditMode;
     private List<string> _events = new();
@@ -46,7 +57,7 @@
         Type = AggregateType.Custom,
         CustomAggregate = x =>
         {
-            var total = x.Sum(y => y.cost);
+            var total = x.Sum(y => y.costInitial);
             return $"Total Cost is {total:C0}";
         }
     };
@@ -73,6 +84,21 @@
             snackbar.Add($"Delete Failed ID: {item.id}", Severity.Error);
         }
         StateHasChanged();
+    }
+
+    private void EditItem(Cost cost)
+    {
+        onEditClickCallback.InvokeAsync(cost);
+    }
+
+
+    private string _rowStyleFunc(Cost arg1, int arg2)
+    {
+        if (arg2 == 5)
+        {
+            return "width:20px; justify-content: center;";
+        }
+        return "";
     }
 
 }

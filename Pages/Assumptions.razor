@@ -5,9 +5,7 @@
 @inject ISnackbar _snackbar
 
 <PageTitle>Assumptions</PageTitle>
-<ColouredHeader headerText="Assumptions"/>
-
-<MudText>@_json</MudText>
+<DividerHeader color="Color.Secondary" typo="Typo.h2" headerText="Assumptions" />
 
 <MudTable Items="@_assumptions.Take(8)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
     <HeaderContent>
@@ -26,14 +24,17 @@
 
 <br/>
 
-<MudText Typo="Typo.h4" GutterBottom="true">New Assumption</MudText>
-<SubmissionInput submission="@_submission"/>
 
-<br/>
+<MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
+        OnClick="() => _submissionSideViewIsOpen = true"/>
+<SubmissionInputSideView submission="@_submission" isOpen="_submissionSideViewIsOpen" 
+                         onSubmitClickCallback="SubmitCallback" onCancelClickCallback="CancelCostCallback"/>
 
-<MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToAssumptions">Add To Assumptions</MudButton>
 
-
+@* <MudText Typo="Typo.h4" GutterBottom="true">New Assumption</MudText> *@
+@* <SubmissionInput submission="@_submission"/> *@
+@* <br/> *@
+@* <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToAssumptions">Add To Assumptions</MudButton> *@
 @* <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch> *@
 @* <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch> *@
 @* <MudText Class="mb-4">Current count: @currentCount</MudText> *@
@@ -45,6 +46,7 @@
     private string _json = "Response Text";
 
     private Submission _submission = new();
+    private bool _submissionSideViewIsOpen = false;
 
     private bool _hidePosition;
     private bool _loading;
@@ -57,8 +59,7 @@
 
     private async void AddToAssumptions()
     {
-        if (string.IsNullOrWhiteSpace(_submission.author) 
-            || string.IsNullOrWhiteSpace(_submission.text)
+        if (string.IsNullOrWhiteSpace(_submission.text)
             || string.IsNullOrWhiteSpace(_submission.title)) return;
 
         
@@ -75,6 +76,8 @@
         
         _assumptions = _assumptions?.Append(newAssumption);
         _submission = new Submission();
+        _submissionSideViewIsOpen = false;
+        StateHasChanged();
         
         var response = await httpClient.PostAsJsonAsync(PathHelper.assumptionPostConnString, newAssumption);
 
@@ -106,5 +109,17 @@
             config.Onclick = _ => Task.CompletedTask;
         });
     }
-    
+
+    private void SubmitCallback()
+    {
+        AddToAssumptions();
+    }
+
+    private void CancelCostCallback()
+    {
+        _submission = new Submission();
+        _submissionSideViewIsOpen = false;
+        StateHasChanged();
+    }
+
 }

@@ -40,6 +40,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbG91cmVkSGVhZGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/ConversionRatesCard.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbnZlcnNpb25SYXRlc0NhcmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/CostDataGrid.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvc3REYXRhR3JpZC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -50,6 +54,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/CostInputSideView.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvc3RJbnB1dFNpZGVWaWV3LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/DividerHeader.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXERpdmlkZXJIZWFkZXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/MainLayout.razor]
@@ -70,6 +78,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/SubmissionInput.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1Ym1pc3Npb25JbnB1dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/SubmissionInputSideView.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1Ym1pc3Npb25JbnB1dFNpZGVWaWV3LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/_Imports.razor]

@@ -1,54 +1,31 @@
 ﻿@page "/preparations"
 @using HCatalystProjectCostsSite.Models
 @using System.Collections.ObjectModel
-@using HCatalystProjectCostsSite.Enums
 @using HCatalystProjectCostsSite.Helpers
+@using HCatalystProjectCostsSite.Services
 @inject HttpClient httpClient;
 @inject ISnackbar _snackbar
+@inject ConversionService conversionService;
 
 <PageTitle>Preparation</PageTitle>
-<ColouredHeader headerText="Preparation"/>
 
-@* @if(_cost is not null) *@
-@* { *@
-@*     <MudText Typo="Typo.h4" GutterBottom="true">New Cost</MudText> *@
-@*     <CostInput cost="@_cost"/> *@
-@*     <MudPaper Class="my-4 pa-2"> *@
-@*         <MudStack Row="true"> *@
-@*             <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToCosts">Add To Costs</MudButton> *@
-@*             <MudButton Color="Color.Secondary" Variant="Variant.Filled" @onclick="CancelCost">Cancel</MudButton> *@
-@*         </MudStack> *@
-@*     </MudPaper> *@
-@*     <MudDivider Class="mb-8"/> *@
-@* } *@
-
+<DividerHeader headerText="Preparations"/>
 
 <MudStack Row="true" AlignItems="AlignItems.Center">
     <MudText Typo="Typo.h3" GutterBottom="false">Preparation Costs</MudText>
-    @if (_cost is null)
-    {
-        <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="NewCost">Add A New Cost</MudButton>
-
-            @* <MudPaper Class="ma-2 pa-2" > *@
-            @*     <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="NewCost">Add A New Cost</MudButton> *@
-            @* </MudPaper> *@
-    }
 </MudStack>
 
-
 <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
-<NonRecurringCostsDataGrid costs="@costs"/>
+<RecurringCostDataGrid costs="@costs" onEditClickCallback="OnCostEditClicked"/>
 
 <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Recurring Costs</MudText>
-<RecurringCostDataGrid costs="@recurringCosts"/>
+<RecurringCostDataGrid costs="@recurringCosts" onEditClickCallback="OnCostEditClicked"/>
 
-<MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => _costSideViewIsOpen = true"/>
-<CostInputSideView cost="@_costSideView" isOpen="_costSideViewIsOpen" onSubmitClickCallback="Callback"/>
+<MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
+        OnClick="() => _costSideViewIsOpen = true"/>
+<CostInputSideView cost="@_costSideView" isOpen="_costSideViewIsOpen" onSubmitClickCallback="SubmitCostCallback" 
+                   onCancelClickCallback="CancelCostCallback" isNew="_sideViewCostIsNew"/>
 
-@* <MudButton Variant="Variant.Outlined" Class="mt-16" OnClick="() => _costSideViewIsOpen = true">Open Side Cost</MudButton> *@
-@* <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch> *@
-@* <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch> *@
-@* <MudText Class="mb-4">Current count: @currentCount</MudText> *@
 
 @code {
 
@@ -58,19 +35,28 @@
 
     private Cost _costSideView = new();
     private bool _costSideViewIsOpen = false;
+    private bool _sideViewCostIsNew = true;
 
     private bool _hidePosition;
     private bool _loading;
 
     protected override async Task OnInitializedAsync()
     {
-        //_assumptions = await httpClient.GetFromJsonAsync<List<Element>>("webapi/periodictable");
+        await LoadCosts();
+    }
+
+    private async Task LoadCosts()
+    {
+        recurringCosts.Clear();
+        costs.Clear();
+        
         var loadedCosts = await httpClient.GetFromJsonAsync<List<Cost>>(PathHelper.costsGetConnString);
 
         if (loadedCosts is null) return;
 
         foreach (var loadedCost in loadedCosts)
         {
+            loadedCost.SetRates(conversionService.conversionRates);
             if (loadedCost.recurring)
             {
                 recurringCosts.Add(loadedCost);
@@ -80,18 +66,24 @@
                 costs.Add(loadedCost);
             }
         }
-        
+        StateHasChanged();
+    }
+
+    private void OnCostEditClicked(Cost obj)
+    {
+        _sideViewCostIsNew = false;
+        _costSideViewIsOpen = true;
+        _costSideView = obj;
     }
 
     private async void AddToCosts()
     {
-        if (string.IsNullOrWhiteSpace(_cost?.submission.author) 
-            || string.IsNullOrWhiteSpace(_cost.submission.text)
+        if (string.IsNullOrWhiteSpace(_cost?.submission.text)
             || string.IsNullOrWhiteSpace(_cost.submission.title)) return;
         
-        
-        
-        var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _cost);
+        //var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _cost);
+        var path = PathHelper.TemplateCostConnString(_cost.id, PathHelper.costUpsertByIdSuffix);
+        var response = await httpClient.PutAsJsonAsync(path, _cost);
 
         if (response.IsSuccessStatusCode)
         {
@@ -99,7 +91,7 @@
         }
         else
         {
-            AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
+            AddSnackBarUpdate(response.ReasonPhrase ?? "Failed To Upload", Severity.Error);
         }
 
         if (_cost.recurring)
@@ -135,37 +127,38 @@
         });
     }
 
-    private async void Callback()
+    private async void SubmitCostCallback()
     {
-        if (string.IsNullOrWhiteSpace(_costSideView?.submission.author) 
-            || string.IsNullOrWhiteSpace(_costSideView.submission.text)
+        if (string.IsNullOrWhiteSpace(_costSideView.submission.text)
             || string.IsNullOrWhiteSpace(_costSideView.submission.title)) return;
         
+        var response = await httpClient.PutAsJsonAsync(
+            PathHelper.UpsertCostByIdConnString(_costSideView.id), _costSideView);
         
-        
-        var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _costSideView);
-
         if (response.IsSuccessStatusCode)
         {
             AddSnackBarUpdate("Upload to DB Success");
         }
         else
         {
-            AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
-        }
-
-        if (_costSideView.recurring)
-        {
-            recurringCosts.Add(_costSideView);
-        }
-        else
-        {
-            costs.Add(_costSideView);
+            AddSnackBarUpdate(response.StatusCode.ToString(), Severity.Error);
         }
         
         _costSideView = new Cost();
-        
+        _costSideViewIsOpen = false;
+        _sideViewCostIsNew = true;
         StateHasChanged();
+
+        await LoadCosts(); 
     }
+
+    private void CancelCostCallback()
+    {
+        _costSideView = new Cost();
+        _costSideViewIsOpen = false;
+        _sideViewCostIsNew = true;
+    }
+
+
 
 }

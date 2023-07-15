@@ -1,13 +1,11 @@
 ﻿@using HCatalystProjectCostsSite.Models
 
-
-
 <MudDrawer @bind-Open="@isOpen" Width="40%" Height="100%" Anchor="Anchor.Right" Elevation="1"
            Variant="@DrawerVariant.Temporary">
     <MudPaper Class="ma-8 pa-8">
-        <MudText Typo="Typo.h4">@AddOrUpdateText() Cost</MudText>
+        <MudText Typo="Typo.h4">Add New Assumption</MudText>
         <MudDivider Class="my-4" Light="false"/>
-        <CostInput cost="cost"/>
+        <SubmissionInput submission="submission"/>
         <MudStack Row="true">
             <MudButton Class="mt-2" Variant="Variant.Filled" OnClick="onSubmitClickCallback" Color="Color.Tertiary">
                 Submit
@@ -20,25 +18,16 @@
 </MudDrawer>
 
 @code {
-
+    
     [Parameter]
     public bool isOpen { get; set; }
 
     [Parameter]
-    public Cost cost { get; set; } = new();
-    
-    [Parameter]
-    public bool isNew { get; set; }
+    public Submission submission { get; set; } = new();
     
     [Parameter]
     public EventCallback<MouseEventArgs> onSubmitClickCallback { get; set; }
     
     [Parameter]
     public EventCallback<MouseEventArgs> onCancelClickCallback { get; set; }
-
-
-    private string AddOrUpdateText()
-    {
-        return isNew ? "Add New" : "Update";
-    }
 }

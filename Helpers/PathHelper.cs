@@ -31,6 +31,12 @@ public static class PathHelper
     public const string costPostConnString =
         "https://hcatalystcostsprojectapi.azurewebsites.net/api/cost?code=hFyg4sLPK80q4n-LY0HjYkqbDc064NerHdD4y9ayLFOFAzFuDF95Mw==";
 
+
+    public const string costDeleteSuffix = "Z7eDzkANLU_s1GpMHyylOS82DKPfaBYUQ2KjWJ2n4ODFAzFuOymztQ==";
+    public const string costGetByIdSuffix = "s52Pfp6KaoAxhBrs6jgE4n-F-a74wM4aHeJjvbaZiAL2AzFugUgfEQ==";
+    public const string costUpsertByIdSuffix = "BfN4gz1NkRdJLSeVL_6XP_3UoH1rzqxM7Go6iypyDWUAAzFuWboDMg==";
+
+
     public static string GetCostDeleteConnString(string id)
     {
         return
@@ -42,9 +48,21 @@ public static class PathHelper
         return
             $"https://hcatalystcostsprojectapi.azurewebsites.net/api/cost/{id}?code=s52Pfp6KaoAxhBrs6jgE4n-F-a74wM4aHeJjvbaZiAL2AzFugUgfEQ==";
     }
+    
+    public static string UpsertCostByIdConnString(string id)
+    {
+        return
+            $"https://hcatalystcostsprojectapi.azurewebsites.net/api/cost/{id}?code=BfN4gz1NkRdJLSeVL_6XP_3UoH1rzqxM7Go6iypyDWUAAzFuWboDMg==";
+    }
+    
+    public static string TemplateCostConnString(string id, string connStrSuffix)
+    {
+        return $"https://hcatalystcostsprojectapi.azurewebsites.net/api/cost/{id}?code={connStrSuffix}";
+    }
 
-    
-    
+    public const string getConvRatesConnString = 
+        "https://hcatalystcostsprojectapi.azurewebsites.net/api/conversionRates?code=8nTq9qDFGWi7mUf3D4ajNfthNsJL-5KYZjsr-nfiHVSqAzFuetyHJw==";
+
     // public static string BuildBaseApiPath(string name)
     // {
     //     return  $"{serviceEndpoint}{name}{hostKeyPrefix}{hostKey}";

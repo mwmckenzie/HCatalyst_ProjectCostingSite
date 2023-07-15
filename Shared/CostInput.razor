@@ -5,37 +5,104 @@
 
 <SubmissionInput submission="@cost.submission"/>
 
-<MudNumericField Class="my-4"
-    @bind-Value="@cost.cost"
-    Label="Amount" 
-    Format="F2" 
-    Variant="Variant.Outlined" 
-    Adornment="Adornment.Start" 
-    AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+<MudPaper Class="my-2 pa-2">
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudSelect T="Currency" Label="Currency" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.currency" 
+                   Variant="Variant.Outlined">
+            @foreach(var currency in Enum.GetValues<Currency>())
+            {
+                <MudSelectItem Value="currency"/>
+            }
+        </MudSelect>
+        <MudNumericField Class="mt-1"
+                         @bind-Value="@cost.costInitial"
+                         Label="Amount" 
+                         Format="F2" 
+                         Variant="Variant.Outlined"/>
+    </MudStack>
+</MudPaper>
 
-<MudStack Row="true">
-    <MudSelect T="Basis" Label="Basis" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.basis">
-        @foreach(var basis in Enum.GetValues<Basis>())
-        {
-            <MudSelectItem Value="basis"/>
-        }
-    </MudSelect>
-    <MudPaper Class="pa-2">
-        <MudSwitch Checked="cost.recurring" Label="Recurring" Color="Color.Info" />
-    </MudPaper>
-</MudStack>
+<MudPaper Class="pa-2">
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudSelect T="Basis" Label="Basis" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.basis" 
+                   Variant="Variant.Outlined">
+            @foreach(var basis in Enum.GetValues<Basis>())
+            {
+                <MudSelectItem Value="basis"/>
+            }
+        </MudSelect>
+        <MudCheckBox Checked="cost.recurring" Disabled="true" Label="Recurring"/>
+    </MudStack>
+</MudPaper>
 
 @if (cost.recurring)
 {
-    <MudNumericField Class="my-4"
-        @bind-Value="@cost.costRecurring"
-        Label="Amount" 
-        Format="F2" 
-        Variant="Variant.Outlined" 
-        Adornment="Adornment.Start" 
-        AdornmentIcon="@Icons.Material.Filled.AttachMoney"/>
+    <MudPaper Class="my-2 pa-2">
+        <MudStack Row="true" AlignItems="AlignItems.Center">
+            <MudSelect T="Currency" Label="Currency" AnchorOrigin="Origin.BottomCenter" @bind-Value="@cost.currency" 
+                       Variant="Variant.Outlined">
+                @foreach(var currency in Enum.GetValues<Currency>())
+                {
+                    <MudSelectItem Value="currency"/>
+                }
+            </MudSelect>
+            <MudNumericField Class="mt-1"
+                             @bind-Value="@cost.costRecurring"
+                             Label="Recurring Amount" 
+                             Format="F2" 
+                             Variant="Variant.Outlined"/>
+            <MudNumericField Class="mt-1" @bind-Value="@cost.basisCount" Label="Basis Count" Variant="Variant.Outlined"/>
+        </MudStack>
+    </MudPaper>
 }
 
+<MudPaper Class="mt-2 pa-2">
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudSelect T="CostType" Label="Cost Type" AnchorOrigin="Origin.BottomCenter"
+                   @bind-Value="@cost.costType" Variant="Variant.Outlined">
+            
+            @foreach (var costType in Enum.GetValues<CostType>())
+            {
+                <MudSelectItem Value="costType"/>
+            }
+            
+        </MudSelect>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Class="mt-2 pa-2">
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudSelect T="AssociatedRole" Label="Associated Role" AnchorOrigin="Origin.BottomCenter"
+                   @bind-Value="@cost.associatedRole" Variant="Variant.Outlined">
+            
+            @foreach (var associatedRole in Enum.GetValues<AssociatedRole>())
+            {
+                <MudSelectItem Value="associatedRole"/>
+            }
+            
+        </MudSelect>
+        <MudNumericField Class="mt-1"@bind-Value="@cost.associatedRoleCount" Label="Role Count" 
+                         Variant="Variant.Outlined"/>
+        @* <MudCheckBox Checked="cost.associatedRole" Disabled="true" Label="Recurring"/> *@
+    </MudStack>
+</MudPaper>
+
+<MudPaper Class="mt-2 pa-2">
+    <MudStack Row="true" AlignItems="AlignItems.Center">
+        <MudSelect T="CostEvent" Label="Associated Events" AnchorOrigin="Origin.BottomCenter"
+                   @bind-Value="@cost.costEvent" Variant="Variant.Outlined">
+            
+            @foreach (var costEvent in Enum.GetValues<CostEvent>())
+            {
+                <MudSelectItem Value="costEvent"/>
+            }
+            
+        </MudSelect>
+        <MudNumericField Class="mt-1"@bind-Value="@cost.EventCount" Label="Event Count" 
+                         Variant="Variant.Outlined"/>
+        @* <MudCheckBox Checked="cost.associatedRole" Disabled="true" Label="Recurring"/> *@
+    </MudStack>
+</MudPaper>
 
 
 @code {

@@ -1,4 +1,4 @@
-// HCatalyst_ProjectCostingSite -- SubmissionInput.cs
+﻿// HCatalyst_ProjectCostingSite -- AssociatedRole.cs
 // 
 // Copyright (C) 2023 Matthew W. McKenzie and Kenz LLC
 // 
@@ -10,20 +10,19 @@
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more submission.
+// GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-using HCatalystProjectCostsSite.Enums;
+namespace HCatalystProjectCostsSite.Enums;
 
-namespace HCatalystProjectCostsSite.Models;
-
-public class Submission
+public enum AssociatedRole
 {
-    public Project project { get; set; } = Project.HopeStudios;
-    public string title { get; set; }
-    public string text { get; set; }
-    public Submitter author { get; set; }
-    public string submittedOn { get; set; }
+    NonAttributed,
+    Candidate,
+    Facilitator,
+    Expert,
+    AdminSupport,
+    
 }

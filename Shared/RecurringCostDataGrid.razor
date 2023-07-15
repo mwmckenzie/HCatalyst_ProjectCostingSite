@@ -1,16 +1,33 @@
 @using HCatalystProjectCostsSite.Models
 @using System.Collections.ObjectModel
 @using HCatalystProjectCostsSite.Enums
+@using HCatalystProjectCostsSite.Helpers
+@inject HttpClient httpClient;
+@inject ISnackbar snackbar
 
 <MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
     <Columns>
         <PropertyColumn Property="x => x.submission.title" Title="Cost" />
-        <PropertyColumn Property="x => x.cost" Format="C"  Title="Amount"/>
+        <PropertyColumn Property="x => x.currency"  Title="Currency"/>
+        <PropertyColumn Property="x => x.costInitial" Format="F2"  Title="Initial Amount"/>
+        <PropertyColumn Property="x => x.costRecurring" Format="F2"  Title="Recurring Amount"/>
         <PropertyColumn Property="x => x.basis"  Title="Basis"/>
-        <PropertyColumn Property="x => x.AnnualCost()" Title="Annual Cost"  
+        <PropertyColumn Property="x => x.CostTotalInUsd()" Title="Total Cost (USD)"  
                         Format="C" AggregateDefinition="_costAggregation"/>
-        <PropertyColumn Property="x => x.submission.author"  Title="Submitted By"/>
-        <PropertyColumn Property="x => x.submission.submittedOn"  Title="Submitted On"/>
+        <PropertyColumn Property="x => x.basisCount"  Title="Basis Count"/>
+        <PropertyColumn Property="x => x.associatedRoleCount"  Title="Role Count"/>
+        <PropertyColumn Property="x => x.EventCount"  Title="Event Count"/>
+        <TemplateColumn CellClass="clm-row-small">
+            <CellTemplate>
+                <MudStack Row="true" Spacing="2" Justify="Justify.Center">
+                    <MudIconButton OnClick="() => EditItem(context.Item)" Color="Color.Info" Variant="Variant.Filled"
+                                   Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" />
+                    <MudIconButton OnClick="() => DeleteItem(context.Item)" Color="Color.Error" Variant="Variant.Filled"
+                                   Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+        
     </Columns>
 </MudDataGrid>
 
@@ -18,15 +35,42 @@
     
     [Parameter]
     public ObservableCollection<Cost> costs { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<Cost> onEditClickCallback { get; set; }
 
     private AggregateDefinition<Cost> _costAggregation = new AggregateDefinition<Cost>
     {
         Type = AggregateType.Custom,
         CustomAggregate = x =>
         {
-            var total = x.Sum(y => y.AnnualCost());
+            var total = x.Sum(y => y.CostTotalInUsd());
             return $"Total Annual Cost is {total:C0}";
         }
     };
+    
+    private async void DeleteItem(Cost item)
+    {
+        snackbar.Add($"Deleting ID: {item.id}", Severity.Info);
+        
+        if (!costs.Contains(item)) return;
+        costs.Remove(item);
+        var response = await httpClient.DeleteAsync(PathHelper.GetCostDeleteConnString(item.id));
+
+        if (response.IsSuccessStatusCode)
+        {
+            snackbar.Add($"Deleted ID: {item.id}", Severity.Success);
+        }
+        else
+        {
+            snackbar.Add($"Delete Failed ID: {item.id}", Severity.Error);
+        }
+        StateHasChanged();
+    }
+
+    private void EditItem(Cost cost)
+    {
+        onEditClickCallback.InvokeAsync(cost);
+    }
 
 }

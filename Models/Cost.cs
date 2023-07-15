@@ -21,17 +21,63 @@ namespace HCatalystProjectCostsSite.Models;
 
 public class Cost
 {
+    
     public string id { get; set; } = Guid.NewGuid().ToString();
     public Submission submission { get; set; } = new();
-    public decimal cost { get; set; }
-    public decimal costRecurring { get; set; }
     public Currency currency { get; set; } = Currency.USD;
+    
+    public decimal costInitial { get; set; }
+    
+    public decimal costRecurring { get; set; }
     public Basis basis { get; set; }
+    public int basisCount { get; set; }
+    
+    public AssociatedRole associatedRole { get; set; }
+    public int associatedRoleCount { get; set; } = 1;
+    
+    public CostEvent costEvent { get; set; }
+    public int EventCount { get; set; } = 1;
+    
     public CostPhase costPhase { get; set; }
-    // public float cost { get; set; }
-    // public float costRecurring { get; set; }
-
+    public CostType costType { get; set; }
+    
     public bool recurring => basis > Basis.None;
+
+    private ConversionRates? _conversionRates = new();
+    public void SetRates(ConversionRates? rates) => _conversionRates = rates;
+    
+    public decimal CostInitialInUsd()
+    {
+        return currency switch
+        {
+            Currency.USD => costInitial,
+            Currency.GBP => _conversionRates.GbpToUsd * costInitial,
+            Currency.EUR => _conversionRates.eurToUsd * costInitial,
+            _ => costInitial
+        };
+    }
+    
+    public decimal CostTotalInUsd()
+    {
+        return currency switch
+        {
+            Currency.USD => CostSubtotal(),
+            Currency.GBP => _conversionRates.GbpToUsd * CostSubtotal(),
+            Currency.EUR => _conversionRates.eurToUsd * CostSubtotal(),
+            _ => CostSubtotal()
+        };
+    }
+    
+    public decimal CostInUsd(ConversionRates rates)
+    {
+        return currency switch
+        {
+            Currency.USD => CostSubtotal(),
+            Currency.GBP => rates.usdToGbp * CostSubtotal(),
+            Currency.EUR => rates.usdToEur * CostSubtotal(),
+            _ => CostSubtotal()
+        };
+    }
     
     public decimal AnnualCost()
     {
@@ -59,6 +105,26 @@ public class Cost
 
     public decimal CostOverPeriod(decimal years)
     {
-        return cost + AnnualCost() * years;
+        return costInitial + AnnualCost() * years;
+    }
+    
+    public decimal CostSubtotalPeriod()
+    {
+        return costInitial + costRecurring * MinOne(basisCount);
+    }
+
+    public decimal CostSubtotalPeriodRoles()
+    {
+        return CostSubtotalPeriod() * MinOne(associatedRoleCount);
+    }
+
+    public decimal CostSubtotal()
+    {
+        return CostSubtotalPeriodRoles() * MinOne(EventCount);
+    }
+
+    private int MinOne(int num)
+    {
+        return num < 1 ? 1 : num;
     }
 }

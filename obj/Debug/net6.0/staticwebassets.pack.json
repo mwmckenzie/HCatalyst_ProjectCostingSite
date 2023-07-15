@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\index.html"
     },
     {
+      "Id": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\sample-data\\conversionrates.json",
+      "PackagePath": "staticwebassets\\sample-data\\conversionrates.json"
+    },
+    {
       "Id": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\sample-data\\weather.json",
       "PackagePath": "staticwebassets\\sample-data\\weather.json"
     },

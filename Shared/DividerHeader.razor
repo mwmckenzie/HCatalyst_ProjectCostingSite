@@ -1,0 +1,29 @@
+﻿
+
+<MudText Typo="@typo" Class="mb-4">@headerText</MudText>
+
+@if (color == Color.Primary)
+{
+    <MudPaper Class="flex-grow-1 mb-16 py-1 mud-theme-primary" />
+}
+@if (color == Color.Secondary)
+{
+    <MudPaper Class="flex-grow-1 mb-16 py-1 mud-theme-secondary" />
+}
+@if (color == Color.Tertiary)
+{
+    <MudPaper Class="flex-grow-1 mb-16 py-1 mud-theme-tertiary" />
+}
+
+@code {
+
+    [Parameter]
+    public string headerText { get; set; } = "Title";
+
+    [Parameter]
+    public Color color { get; set; } = Color.Tertiary;
+
+    [Parameter]
+    public Typo typo { get; set; } = Typo.h2;
+
+}
