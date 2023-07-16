@@ -13,10 +13,6 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
-      "Id": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\favicon_old.ico",
-      "PackagePath": "staticwebassets\\favicon_old.ico"
-    },
-    {
       "Id": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
     },

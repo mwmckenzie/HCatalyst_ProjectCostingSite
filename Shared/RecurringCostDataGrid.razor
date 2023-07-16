@@ -44,6 +44,12 @@
     </Columns>
 </MudDataGrid>
 
+@if (isLoading)
+{
+    <MudProgressLinear Color="Color.Secondary" Indeterminate="true" Class="mb-7"/>
+}
+
+
 @code {
     
     [Parameter]
@@ -51,6 +57,9 @@
     
     [Parameter]
     public EventCallback<Cost> onEditClickCallback { get; set; }
+
+    [Parameter]
+    public bool isLoading { get; set; }
 
     private AggregateDefinition<Cost> _costAggregation = new AggregateDefinition<Cost>
     {

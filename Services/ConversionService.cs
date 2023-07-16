@@ -24,7 +24,8 @@ namespace HCatalystProjectCostsSite.Services;
 public class ConversionService
 {
     public HttpClient http { get; set; }
-    public ConversionRates? conversionRates { get; private set; }    
+    public ConversionRates? conversionRates { get; private set; }
+    public bool overlayIsVisible { get; set; }
 
     public ConversionService(HttpClient httpClient)
     {

@@ -1,0 +1,20 @@
+﻿@using HCatalystProjectCostsSite.Services
+@inject ConversionService conversionService
+
+<MudOverlay @bind-Visible="_isVisible" DarkBackground="true" AutoClose="true">
+    <ConversionRatesCard/>
+</MudOverlay>
+
+<MudFab Style="position: fixed; top: 100px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CurrencyExchange" OnClick="OpenOverlay" />
+
+@code {
+
+    private bool _isVisible;
+
+    public void OpenOverlay()
+    {
+        _isVisible = true;
+        StateHasChanged();
+    }
+
+}

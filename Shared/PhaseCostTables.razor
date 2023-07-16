@@ -17,15 +17,19 @@
 
 <CollapsableCostsTable costPhase="@costPhase" costs="@costs" tableType="TableType.AllCosts"
                        tableIsShowingAtStart ="true" OnCostEditClicked="OnCostEditClicked" 
-                       OnShowTableClicked="LoadCosts"/>
+                       OnShowTableClicked="LoadCosts" isLoading="@_isLoading"/>
 
 <CollapsableCostsTable costPhase="@costPhase" costs="@nonRecurringCosts" tableType="TableType.NonRecurringCosts"
                        tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
-                       OnShowTableClicked="LoadCosts"/>
+                       OnShowTableClicked="LoadCosts" isLoading="@_isLoading"/>
 
 <CollapsableCostsTable costPhase="@costPhase" costs="@recurringCosts" tableType="TableType.RecurringCosts"
                        tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
-                       OnShowTableClicked="LoadCosts"/>
+                       OnShowTableClicked="LoadCosts" isLoading="@_isLoading"/>
+
+<ConversionRatesOverlay />
+
+
 
 <MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
         OnClick="() => _costSideViewIsOpen = true"/>
@@ -107,11 +111,12 @@
     private bool _sideViewCostIsNew = true;
 
     private bool _hidePosition;
-    private bool _loading;
+    private bool _isLoading;
 
     private bool _showTableCosts = true;
     private bool _showTableNonRecurring = false;
     private bool _showTableRecurring = false;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,6 +125,7 @@
 
     private async Task LoadCosts()
     {
+        _isLoading = true;
         recurringCosts.Clear();
         nonRecurringCosts.Clear();
         costs.Clear();
@@ -147,6 +153,8 @@
             }
             costs.Add(loadedCost);
         }
+
+        _isLoading = false;
         StateHasChanged();
     }
 

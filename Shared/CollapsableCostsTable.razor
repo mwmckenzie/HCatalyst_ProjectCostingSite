@@ -43,6 +43,9 @@
     [Parameter]
     public EventCallback OnShowTableClicked { get; set; }
 
+    [Parameter]
+    public bool isLoading { get; set; }
+    
     private bool _tableIsShowing;
 
     protected override void OnInitialized()

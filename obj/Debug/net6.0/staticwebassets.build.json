@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "yWwJZGWNMjZvPOkni6h403xeM4+7iqzBCoUxLtNv5rU=",
+  "Hash": "45IZ4dr+7SVuhJsYjU8wFFMAnH2xfbHdvnSPIf6/tiE=",
   "Source": "HCatalystProjectCostsSite",
   "BasePath": "/",
   "Mode": "Root",
@@ -6934,23 +6934,6 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "Never",
       "OriginalItemSpec": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\bin\\Debug\\net6.0\\wwwroot\\_framework\\System.Transactions.Local.dll"
-    },
-    {
-      "Identity": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\favicon_old.ico",
-      "SourceId": "HCatalystProjectCostsSite",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\",
-      "BasePath": "/",
-      "RelativePath": "favicon_old.ico",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\favicon_old.ico"
     },
     {
       "Identity": "C:\\Users\\Matt\\OneDrive\\Projects\\csharp\\HCatalyst_ProjectCostingSite\\wwwroot\\favicon.ico",

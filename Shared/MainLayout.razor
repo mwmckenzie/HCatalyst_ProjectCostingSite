@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using HCatalystProjectCostsSite.Services
+@inherits LayoutComponentBase
 
 <MudThemeProvider  @bind-IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
@@ -9,7 +10,9 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Outlined.Lightbulb" Color="Color.Inherit" Link="https://hcatalyst.io/" Target="_blank" />
-        <MudLink Typo="Typo.h6" Color="Color.Inherit" Href="https://hcatalyst.io/">H/CATALYST/</MudLink>
+        <MudLink Typo="Typo.h6" Color="Color.Inherit" Href="https://hcatalyst.io/">
+             <MudElement Style="color: yellow">H/</MudElement>CATALYST<MudElement Style="color: yellow">/</MudElement>
+        </MudLink>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
         <MudDrawerHeader>
@@ -21,6 +24,7 @@
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-12 pt-12">
             @Body
         </MudContainer>
+            
     </MudMainContent>
 </MudLayout>
 
