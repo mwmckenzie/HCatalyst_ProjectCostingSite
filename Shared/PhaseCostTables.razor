@@ -16,7 +16,7 @@
 </MudStack>
 
 <CollapsableCostsTable costPhase="@costPhase" costs="@costs" tableType="TableType.AllCosts"
-                       tableIsShowingAtStart ="true" OnCostEditClicked="OnCostEditClicked" 
+                       tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
                        OnShowTableClicked="LoadCosts" isLoading="@_isLoading"/>
 
 <CollapsableCostsTable costPhase="@costPhase" costs="@nonRecurringCosts" tableType="TableType.NonRecurringCosts"
@@ -126,6 +126,7 @@
     private async Task LoadCosts()
     {
         _isLoading = true;
+
         recurringCosts.Clear();
         nonRecurringCosts.Clear();
         costs.Clear();
@@ -145,12 +146,16 @@
             loadedCost.SetRates(conversionService.conversionRates);
             if (loadedCost.recurring)
             {
+                if (recurringCosts.Contains(loadedCost)) continue;
+                
                 recurringCosts.Add(loadedCost);
             }
             else
             {
+                if (nonRecurringCosts.Contains(loadedCost)) continue;
                 nonRecurringCosts.Add(loadedCost);
             }
+            if (costs.Contains(loadedCost)) continue;
             costs.Add(loadedCost);
         }
 
