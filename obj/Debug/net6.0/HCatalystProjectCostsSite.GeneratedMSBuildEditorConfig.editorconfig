@@ -60,6 +60,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUHJlcGFyYXRpb25zLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/AssumptionInputSideView.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEFzc3VtcHRpb25JbnB1dFNpZGVWaWV3LnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/AssumptionsDataGrid.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEFzc3VtcHRpb25zRGF0YUdyaWQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/ColouredHeader.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbG91cmVkSGVhZGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

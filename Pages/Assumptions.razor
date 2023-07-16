@@ -1,87 +1,80 @@
 ﻿@page "/assumptions"
 @using HCatalystProjectCostsSite.Models
 @using HCatalystProjectCostsSite.Helpers
+@using System.Collections.ObjectModel
 @inject HttpClient httpClient;
 @inject ISnackbar _snackbar
 
 <PageTitle>Assumptions</PageTitle>
 <DividerHeader color="Color.Secondary" typo="Typo.h2" headerText="Assumptions" />
 
-<MudTable Items="@_assumptions.Take(8)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
-    <HeaderContent>
-        <MudTh>Title</MudTh>
-        <MudTh>Description</MudTh>
-        <MudTh>Submitted By</MudTh>
-        <MudTh>Submitted On</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Title">@context.submission.title</MudTd>
-        <MudTd DataLabel="Description">@context.submission.text</MudTd>
-        <MudTd DataLabel="Submitted By">@context.submission.author</MudTd>
-        <MudTd DataLabel="Submitted On" HideSmall="_hidePosition">@context.submission.submittedOn</MudTd>
-    </RowTemplate>
-</MudTable>
+@* <MudTable Items="@_assumptions.Take(8)" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info"> *@
+@*     <HeaderContent> *@
+@*         <MudTh>Title</MudTh> *@
+@*         <MudTh>Description</MudTh> *@
+@*         <MudTh>Submitted By</MudTh> *@
+@*         <MudTh>Submitted On</MudTh> *@
+@*     </HeaderContent> *@
+@*     <RowTemplate> *@
+@*         <MudTd DataLabel="Title">@context.assumption.title</MudTd> *@
+@*         <MudTd DataLabel="Description">@context.assumption.text</MudTd> *@
+@*         <MudTd DataLabel="Submitted By">@context.assumption.author</MudTd> *@
+@*         <MudTd DataLabel="Submitted On" HideSmall="_hidePosition">@context.assumption.submittedOn</MudTd> *@
+@*     </RowTemplate> *@
+@* </MudTable> *@
 
-<br/>
+<AssumptionsDataGrid assumptions="_assumptions" onEditClickCallback="OnCostEditClicked"/>
 
 
 <MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
-        OnClick="() => _submissionSideViewIsOpen = true"/>
-<SubmissionInputSideView submission="@_submission" isOpen="_submissionSideViewIsOpen" 
+        OnClick="() => _assumptionSideViewIsOpen = true"/>
+
+<AssumptionInputSideView assumption="@_assumption" isOpen="_assumptionSideViewIsOpen"
                          onSubmitClickCallback="SubmitCallback" onCancelClickCallback="CancelCostCallback"/>
 
 
-@* <MudText Typo="Typo.h4" GutterBottom="true">New Assumption</MudText> *@
-@* <SubmissionInput submission="@_submission"/> *@
-@* <br/> *@
-@* <MudButton Color="Color.Primary" Variant="Variant.Filled" @onclick="AddToAssumptions">Add To Assumptions</MudButton> *@
-@* <MudSwitch @bind-Checked="_hidePosition">Hide <b>position</b> when Breakpoint=Xs</MudSwitch> *@
-@* <MudSwitch @bind-Checked="_loading">Show Loading</MudSwitch> *@
-@* <MudText Class="mb-4">Current count: @currentCount</MudText> *@
-
 
 @code {
-    private int currentCount = 0;
 
-    private string _json = "Response Text";
-
-    private Submission _submission = new();
-    private bool _submissionSideViewIsOpen = false;
+    private ObservableCollection<Assumption>?  _assumptions = new();
+    private Assumption _assumption = new();
+    private bool _assumptionSideViewIsOpen = false;
 
     private bool _hidePosition;
     private bool _loading;
-    private IEnumerable<Assumption>?  _assumptions = new List<Assumption>();
     
     protected override async Task OnInitializedAsync()
     {
-        _assumptions = await httpClient.GetFromJsonAsync<List<Assumption>>(PathHelper.assumptionsGetConnString);
+        await LoadAssumptionsTableAsync();
+    }
+
+    private async Task LoadAssumptionsTableAsync()
+    {
+        var assumptionsList =
+            await httpClient.GetFromJsonAsync<List<Assumption>>(PathHelper.assumptionsGetConnString);
+
+        if (assumptionsList is null) return;
+
+        foreach (var assumption in assumptionsList)
+        {
+            _assumptions?.Add(assumption);
+        }
+        StateHasChanged();
     }
 
     private async void AddToAssumptions()
     {
-        if (string.IsNullOrWhiteSpace(_submission.text)
-            || string.IsNullOrWhiteSpace(_submission.title)) return;
+        if (string.IsNullOrWhiteSpace(_assumption.submission.text)
+            || string.IsNullOrWhiteSpace(_assumption.submission.title)) return;
 
         
-        var newAssumption = new Assumption
-        {
-            submission = new Submission
-            {
-                title = _submission.title,
-                text = _submission.text,
-                author = _submission.author,
-                submittedOn = DateTime.UtcNow.ToShortDateString()
-            }
-        };
+        _assumption.submission.submittedOn = DateTime.UtcNow.ToShortDateString();
+        _assumptions?.Add(_assumption);
         
-        _assumptions = _assumptions?.Append(newAssumption);
-        _submission = new Submission();
-        _submissionSideViewIsOpen = false;
+        _assumptionSideViewIsOpen = false;
         StateHasChanged();
         
-        var response = await httpClient.PostAsJsonAsync(PathHelper.assumptionPostConnString, newAssumption);
-
-        _json = response.RequestMessage?.Content?.ReadAsStringAsync().Result ?? string.Empty;
+        var response = await httpClient.PostAsJsonAsync(PathHelper.assumptionPostConnString, _assumption);
 
         if (response.IsSuccessStatusCode)
         {
@@ -92,13 +85,10 @@
             AddSnackBarUpdate("Upload to DB Failed", Severity.Error);
         }
         
+        _assumption = new Assumption();
         StateHasChanged();
     }
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
     private void AddSnackBarUpdate(string text, Severity severity = Severity.Success) {
         _snackbar.Clear();
         _snackbar.Add(text, severity, config =>
@@ -117,9 +107,16 @@
 
     private void CancelCostCallback()
     {
-        _submission = new Submission();
-        _submissionSideViewIsOpen = false;
+        _assumption = new Assumption();
+        _assumptionSideViewIsOpen = false;
         StateHasChanged();
+    }
+    
+    private void OnCostEditClicked(Assumption obj)
+    {
+        //_assumptionSideViewIsOpen = false;
+        _assumptionSideViewIsOpen = true;
+        _assumption = obj;
     }
 
 }

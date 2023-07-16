@@ -1,0 +1,33 @@
+﻿@using HCatalystProjectCostsSite.Models
+
+<MudDrawer @bind-Open="@isOpen" Width="40%" Height="100%" Anchor="Anchor.Right" Elevation="1"
+           Variant="@DrawerVariant.Temporary">
+    <MudPaper Class="ma-8 pa-8">
+        <MudText Typo="Typo.h4">Add New Assumption</MudText>
+        <MudDivider Class="my-4" Light="false"/>
+        <SubmissionInput submission="assumption.submission"/>
+        <MudStack Row="true">
+            <MudButton Class="mt-2" Variant="Variant.Filled" OnClick="onSubmitClickCallback" Color="Color.Tertiary">
+                Submit
+            </MudButton>
+            <MudButton Class="mt-2" Variant="Variant.Outlined" OnClick="onCancelClickCallback" Color="Color.Secondary">
+                Cancel
+            </MudButton>
+        </MudStack>
+    </MudPaper>
+</MudDrawer>
+
+@code {
+    
+    [Parameter]
+    public bool isOpen { get; set; }
+
+    [Parameter]
+    public Assumption assumption { get; set; } = new();
+    
+    [Parameter]
+    public EventCallback<MouseEventArgs> onSubmitClickCallback { get; set; }
+    
+    [Parameter]
+    public EventCallback<MouseEventArgs> onCancelClickCallback { get; set; }
+}
