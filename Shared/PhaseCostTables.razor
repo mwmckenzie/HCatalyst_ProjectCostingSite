@@ -15,6 +15,17 @@
     <MudText Typo="Typo.h3" GutterBottom="false">@costPhase Costs</MudText>
 </MudStack>
 
+<MudPaper Class="mt-4 pa-4" Width="500px">
+    
+    <MudStack Row="true" Justify="Justify.SpaceBetween">
+        <MudText Typo="Typo.h6">Total</MudText>
+        <MudText Typo="Typo.h6" Color="Color.Primary">
+            $@costs.Sum(x => x.CostTotalInUsd()).ToString("N0")
+        </MudText>
+    </MudStack>
+
+</MudPaper>
+
 <CollapsableCostsTable costPhase="@costPhase" costs="@costs" tableType="TableType.AllCosts"
                        tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
                        OnShowTableClicked="LoadCosts" isLoading="@_isLoading"/>
@@ -27,8 +38,10 @@
                        tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
                        OnShowTableClicked="LoadCosts" isLoading="@_isLoading"/>
 
-<ConversionRatesOverlay />
 
+
+
+<ConversionRatesOverlay />
 
 
 <MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
