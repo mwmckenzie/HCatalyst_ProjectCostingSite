@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider />
+<MudThemeProvider  @bind-IsDarkMode="@_isDarkMode" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
@@ -15,7 +15,7 @@
         <MudDrawerHeader>
             <MudText Typo="Typo.h6" Color="Color.Primary" Style="font-weight: bold">Project Costing</MudText>
         </MudDrawerHeader>
-        <NavMenu />
+        <NavMenu isDarkMode="@_isDarkMode" ToggleDarkMode="TryToggleDarkMode" />
     </MudDrawer>
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-12 pt-12">
@@ -30,5 +30,11 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+    
+    private bool _isDarkMode;
+    
+    void TryToggleDarkMode() {
+        _isDarkMode = !_isDarkMode;
     }
 }

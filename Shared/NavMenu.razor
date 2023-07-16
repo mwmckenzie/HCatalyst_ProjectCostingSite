@@ -1,15 +1,34 @@
 ﻿
-<MudNavMenu Color="Color.Primary" Bordered="true">
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="assumptions" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Assumptions</MudNavLink>
-    <MudNavGroup Expanded="true" Title="Phases">
-        <MudNavLink Href="preparation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Preparation</MudNavLink>
-        <MudNavLink Href="gathering" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Gathering</MudNavLink>
-        <MudNavLink Href="formation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Formation</MudNavLink>
-        <MudNavLink Href="development" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Development</MudNavLink>
-        <MudNavLink Href="conversion" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Conversion</MudNavLink>
-        <MudNavLink Href="cultivation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Cultivation</MudNavLink>
-    </MudNavGroup>
-      
-    @* <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink> *@
-</MudNavMenu>
+<MudPaper Elevation="0" Height="100%" Class="d-flex flex-grow-1">
+    <MudStack Justify="Justify.SpaceBetween">
+        <MudNavMenu Color="Color.Primary" Bordered="true">
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="assumptions" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Assumptions</MudNavLink>
+            <MudNavGroup Expanded="true" Title="Phases">
+                <MudNavLink Href="preparation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Preparation</MudNavLink>
+                <MudNavLink Href="gathering" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Gathering</MudNavLink>
+                <MudNavLink Href="formation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Formation</MudNavLink>
+                <MudNavLink Href="development" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Development</MudNavLink>
+                <MudNavLink Href="conversion" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Conversion</MudNavLink>
+                <MudNavLink Href="cultivation" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Cultivation</MudNavLink>
+            </MudNavGroup>
+              
+            @* <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink> *@
+        </MudNavMenu>
+        <MudElement Class="pa-4 mx-auto">
+            <MudSwitch @bind-Checked="@isDarkMode" Color="Color.Primary" 
+                       T="bool" Label="Toggle Light/Dark Mode"
+                       @onclick="ToggleDarkMode"/>
+        </MudElement>
+    </MudStack>
+</MudPaper>
+
+@code {
+
+    [Parameter] 
+    public bool isDarkMode { get; set; }
+    
+    [Parameter]
+    public EventCallback ToggleDarkMode { get; set; }
+
+}
