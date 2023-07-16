@@ -20,9 +20,15 @@ namespace HCatalystProjectCostsSite.Enums;
 public enum CostType
 {
     NonAttributed,
-    Asset,
-    Fee,
+    AssetPurchase,
+    AdministrativeFee,
+    EntranceFee,
+    TestingFee,
     Contract,
     Consumable,
-    
+    Licensing,
+    Salary,
+    Rental,
+    TravelExpenses,
+    LocalTransportation,
 }

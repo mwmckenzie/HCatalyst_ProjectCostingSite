@@ -25,5 +25,5 @@ public enum CostEvent
     ExpertInteraction,
     FacilitatorActivity,
     SocialActivity,
-    PrEvent,
+    PREvent,
 }

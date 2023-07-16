@@ -18,7 +18,7 @@
         <PropertyColumn Property="x => x.EventCount"  Title="Event Count"/>
         <PropertyColumn Property="x => x.CostTotalInUsd()" Culture="enUsCulture" Title="Total Cost (USD)"  
                         Format="C" CellStyle="font-weight:bold; background-color: rgba(0, 0, 0, .05)"
-                        Style="background-color: rgba(0, 0, 0, 50) " AggregateDefinition="_costAggregation" />
+                        AggregateDefinition="_costAggregation" />
         <TemplateColumn CellClass="clm-row-small">
             <CellTemplate>
                 <MudStack Row="true" Spacing="2" Justify="Justify.Center">
@@ -47,7 +47,7 @@
         {
             var enumerable = x.ToList();
             var total = enumerable.Sum(y => y.CostTotalInUsd());
-            return !enumerable.Any() ? "No Cost" : $"Total Annual Cost is ${total:N0}";
+            return !enumerable.Any() ? "No Cost" : $"Total Cycle Cost is ${total:N0}";
         }
     };
 

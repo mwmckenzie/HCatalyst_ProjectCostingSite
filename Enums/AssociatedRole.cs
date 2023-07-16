@@ -20,9 +20,18 @@ namespace HCatalystProjectCostsSite.Enums;
 public enum AssociatedRole
 {
     NonAttributed,
+    CoreTeam,
     Candidate,
-    Facilitator,
-    Expert,
     AdminSupport,
+    Facilitator,
+    ExpertInternal,
+    ExpertExternal,
+    ArtDesigner,
+    WebDesigner,
+    WebDeveloper,
+    CurriculumDeveloper,
+    PR,
+    Lawyer,
+    Accountant,
     
 }
