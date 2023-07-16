@@ -26,4 +26,6 @@ public enum CostEvent
     FacilitatorActivity,
     SocialActivity,
     PREvent,
+    ProcessDesign,
+    
 }

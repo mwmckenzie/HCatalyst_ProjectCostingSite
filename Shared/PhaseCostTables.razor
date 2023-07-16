@@ -241,7 +241,10 @@
         if (string.IsNullOrWhiteSpace(_costSideView.submission.text)
             || string.IsNullOrWhiteSpace(_costSideView.submission.title)) return;
 
-        _costSideView.costPhase = costPhase;
+        if (costPhase > CostPhase.All )
+        {
+            _costSideView.costPhase = costPhase;
+        }
         
         var response = await httpClient.PutAsJsonAsync(
             PathHelper.UpsertCostByIdConnString(_costSideView.id), _costSideView);
