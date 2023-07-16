@@ -1,0 +1,71 @@
+﻿@using HCatalystProjectCostsSite.Enums
+@using System.Collections.ObjectModel
+@using HCatalystProjectCostsSite.Helpers
+@using HCatalystProjectCostsSite.Models
+
+@if (!_tableIsShowing)
+{
+    <MudButton Class="my-4 mr-4" OnClick="ShowCostsTable" Variant="Variant.Filled" 
+               Color="Color.Primary" Size="Size.Large">
+        @HelperFuncs.EnumDisplayText(tableType) Table
+    </MudButton>
+}
+@if (_tableIsShowing)
+{
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4">
+        <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">
+            @HelperFuncs.EnumDisplayText(tableType)
+        </MudText>
+        <MudButton OnClick="HideCostsTable" Size="Size.Large" Color="Color.Secondary">
+            Hide Table
+        </MudButton>
+    </MudStack>
+    <RecurringCostDataGrid costs="@costs" onEditClickCallback="OnCostEditClicked"/>
+}
+
+@code {
+
+    [Parameter]
+    public CostPhase costPhase { get; set; }
+
+    [Parameter]
+    public TableType tableType { get; set; }
+
+    [Parameter]
+    public ObservableCollection<Cost> costs { get; set; } = new();
+
+    [Parameter]
+    public bool tableIsShowingAtStart { get; set; }
+    
+    [Parameter]
+    public EventCallback<Cost> OnCostEditClicked { get; set; }
+    
+    [Parameter]
+    public EventCallback OnShowTableClicked { get; set; }
+
+    private bool _tableIsShowing;
+
+    protected override void OnInitialized()
+    {
+        _tableIsShowing = tableIsShowingAtStart;
+        if (_tableIsShowing)
+        {
+            ShowCostsTable();
+            return;
+        }
+        HideCostsTable();
+    }
+    
+    private void ShowCostsTable()
+    {
+        _tableIsShowing = true;
+        OnShowTableClicked.InvokeAsync();
+    }
+
+    private void HideCostsTable()
+    {
+        _tableIsShowing = false;
+        StateHasChanged();
+    }
+    
+}

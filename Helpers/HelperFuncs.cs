@@ -36,4 +36,15 @@ public static class HelperFuncs
             Basis.Hourly
         };
     }
+
+    public static string EnumDisplayText(TableType tableType)
+    {
+        return tableType switch
+        {
+            TableType.AllCosts => "All Costs",
+            TableType.RecurringCosts => "Recurring Costs",
+            TableType.NonRecurringCosts => "Non-Recurring Costs",
+            _ => throw new ArgumentOutOfRangeException(nameof(tableType), tableType, null)
+        };
+    }
 }

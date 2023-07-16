@@ -28,6 +28,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29udmVyc2lvbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Pages/CostsAllPhases.razor]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ29zdHNBbGxQaGFzZXMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Pages/Cultivation.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQ3VsdGl2YXRpb24ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -66,6 +70,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/AssumptionsDataGrid.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEFzc3VtcHRpb25zRGF0YUdyaWQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/CollapsableCostsTable.razor]
+build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXENvbGxhcHNhYmxlQ29zdHNUYWJsZS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/Matt/OneDrive/Projects/csharp/HCatalyst_ProjectCostingSite/Shared/ColouredHeader.razor]

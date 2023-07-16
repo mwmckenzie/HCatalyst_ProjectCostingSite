@@ -15,16 +15,82 @@
     <MudText Typo="Typo.h3" GutterBottom="false">@costPhase Costs</MudText>
 </MudStack>
 
-<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Non-Recurring Costs</MudText>
-<RecurringCostDataGrid costs="@costs" onEditClickCallback="OnCostEditClicked"/>
+<CollapsableCostsTable costPhase="@costPhase" costs="@costs" tableType="TableType.AllCosts"
+                       tableIsShowingAtStart ="true" OnCostEditClicked="OnCostEditClicked" 
+                       OnShowTableClicked="LoadCosts"/>
 
-<MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary">Recurring Costs</MudText>
-<RecurringCostDataGrid costs="@recurringCosts" onEditClickCallback="OnCostEditClicked"/>
+<CollapsableCostsTable costPhase="@costPhase" costs="@nonRecurringCosts" tableType="TableType.NonRecurringCosts"
+                       tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
+                       OnShowTableClicked="LoadCosts"/>
+
+<CollapsableCostsTable costPhase="@costPhase" costs="@recurringCosts" tableType="TableType.RecurringCosts"
+                       tableIsShowingAtStart ="false" OnCostEditClicked="OnCostEditClicked" 
+                       OnShowTableClicked="LoadCosts"/>
 
 <MudFab Style="position: fixed; bottom: 20px; right: 20px;" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" 
         OnClick="() => _costSideViewIsOpen = true"/>
 <CostInputSideView cost="@_costSideView" isOpen="_costSideViewIsOpen" onSubmitClickCallback="SubmitCostCallback" 
                    onCancelClickCallback="CancelCostCallback" isNew="_sideViewCostIsNew"/>
+
+@* @if (!_showTableCosts) *@
+@* { *@
+@*     <MudButton Class="my-4 mr-4" OnClick="() => ShowCostsTable(TableType.AllCosts)" Variant="Variant.Filled"  *@
+@*                Color="Color.Primary" Size="Size.Large"> *@
+@*         All Costs Table *@
+@*     </MudButton> *@
+@* } *@
+@* @if (_showTableCosts) *@
+@* { *@
+@*     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4"> *@
+@*         <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary"> *@
+@*             All @costPhase Costs *@
+@*         </MudText> *@
+@*         <MudButton OnClick="() => HideCostsTable(TableType.AllCosts)" Size="Size.Large" Color="Color.Secondary"> *@
+@*             Hide Table *@
+@*         </MudButton> *@
+@*     </MudStack> *@
+@*     <RecurringCostDataGrid costs="@costs" onEditClickCallback="OnCostEditClicked"/> *@
+@* } *@
+
+@* @if (!_showTableNonRecurring) *@
+@* { *@
+@*     <MudButton Class="my-4 mr-4" OnClick="() => ShowCostsTable(TableType.NonRecurringCosts)" Variant="Variant.Filled"  *@
+@*                Color="Color.Primary" Size="Size.Large"> *@
+@*         Non-Recurring Table *@
+@*     </MudButton> *@
+@* } *@
+@* @if (_showTableNonRecurring) *@
+@* { *@
+@*     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4"> *@
+@*         <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary"> *@
+@*             Non-Recurring Costs *@
+@*         </MudText> *@
+@*         <MudButton OnClick="() => HideCostsTable(TableType.NonRecurringCosts)"> *@
+@*             Hide Table *@
+@*         </MudButton> *@
+@*     </MudStack> *@
+@*     <RecurringCostDataGrid costs="@nonRecurringCosts" onEditClickCallback="OnCostEditClicked"/> *@
+@* } *@
+
+@* @if (!_showTableRecurring) *@
+@* { *@
+@*     <MudButton Class="my-4 mr-4" OnClick="() => ShowCostsTable(TableType.RecurringCosts)" Variant="Variant.Filled"  *@
+@*                Color="Color.Primary" Size="Size.Large"> *@
+@*         Recurring Table *@
+@*     </MudButton> *@
+@* } *@
+@* @if (_showTableRecurring) *@
+@* { *@
+@*     <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4"> *@
+@*         <MudText Typo="Typo.h4" Class="my-8" GutterBottom="false" Color="Color.Primary"> *@
+@*             Recurring Costs *@
+@*         </MudText> *@
+@*         <MudButton OnClick="() => HideCostsTable(TableType.RecurringCosts)"> *@
+@*             Hide Table *@
+@*         </MudButton> *@
+@*     </MudStack> *@
+@*     <RecurringCostDataGrid costs="@recurringCosts" onEditClickCallback="OnCostEditClicked"/> *@
+@* } *@
 
 @code {
 
@@ -33,6 +99,7 @@
     
     private ObservableCollection<Cost> costs { get; set; } = new();
     private ObservableCollection<Cost> recurringCosts { get; set; } = new();
+    private ObservableCollection<Cost> nonRecurringCosts { get; set; } = new();
     private Cost? _cost;
 
     private Cost _costSideView = new();
@@ -42,6 +109,10 @@
     private bool _hidePosition;
     private bool _loading;
 
+    private bool _showTableCosts = true;
+    private bool _showTableNonRecurring = false;
+    private bool _showTableRecurring = false;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadCosts();
@@ -50,13 +121,20 @@
     private async Task LoadCosts()
     {
         recurringCosts.Clear();
+        nonRecurringCosts.Clear();
         costs.Clear();
-        
+
         var loadedCosts = await httpClient.GetFromJsonAsync<List<Cost>>(PathHelper.costsGetConnString);
 
         if (loadedCosts is null) return;
 
-        foreach (var loadedCost in loadedCosts.Where(x => x.costPhase == costPhase))
+        var filteredCosts = loadedCosts;
+        if (costPhase > CostPhase.All)
+        {
+            filteredCosts = loadedCosts.Where(x => x.costPhase == costPhase).ToList();
+        }
+        
+        foreach (var loadedCost in filteredCosts)
         {
             loadedCost.SetRates(conversionService.conversionRates);
             if (loadedCost.recurring)
@@ -65,8 +143,9 @@
             }
             else
             {
-                costs.Add(loadedCost);
+                nonRecurringCosts.Add(loadedCost);
             }
+            costs.Add(loadedCost);
         }
         StateHasChanged();
     }
@@ -82,8 +161,6 @@
     {
         if (string.IsNullOrWhiteSpace(_cost?.submission.text)
             || string.IsNullOrWhiteSpace(_cost.submission.title)) return;
-        
-        //var response = await httpClient.PostAsJsonAsync(PathHelper.costPostConnString, _cost);
         
         _cost.costPhase = costPhase;
         
@@ -105,8 +182,9 @@
         }
         else
         {
-            costs.Add(_cost);
+            nonRecurringCosts.Add(_cost);
         }
+        costs.Add(_cost);
         
         _cost = new Cost();
     }
@@ -166,4 +244,43 @@
         _sideViewCostIsNew = true;
     }
     
+
+    // private async Task ShowCostsTable(TableType tableType)
+    // {
+    //     switch (tableType)
+    //     {
+    //         case TableType.AllCosts:
+    //             _showTableCosts = true;
+    //             break;
+    //         case TableType.RecurringCosts:
+    //             _showTableRecurring = true;
+    //             break;
+    //         case TableType.NonRecurringCosts:
+    //             _showTableNonRecurring = true;
+    //             break;
+    //         default:
+    //             throw new ArgumentOutOfRangeException(nameof(tableType), tableType, null);
+    //     }
+    //     await LoadCosts();
+    // }
+    //
+    // private void HideCostsTable(TableType tableType)
+    // {
+    //     switch (tableType)
+    //     {
+    //         case TableType.AllCosts:
+    //             _showTableCosts = false;
+    //             break;
+    //         case TableType.RecurringCosts:
+    //             _showTableRecurring = false;
+    //             break;
+    //         case TableType.NonRecurringCosts:
+    //             _showTableNonRecurring = false;
+    //             break;
+    //         default:
+    //             throw new ArgumentOutOfRangeException(nameof(tableType), tableType, null);
+    //     }
+    //     StateHasChanged();
+    // }
+
 }
