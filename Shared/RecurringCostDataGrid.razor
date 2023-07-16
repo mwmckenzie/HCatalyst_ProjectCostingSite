@@ -6,26 +6,38 @@
 @inject HttpClient httpClient;
 @inject ISnackbar snackbar
 
-<MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+<MudDataGrid Items="@costs" Filterable="false" SortMode="@SortMode.None" Groupable="false" Bordered="false">
+    <ColGroup>
+        <col style="width: 20%;" />
+        <col style="width: 5%;" />
+        <col style="width: 8%;" />
+        <col style="width: 8%;" />
+        <col style="width: 5%;" />
+        <col style="width: 5%;" />
+        <col style="width: 5%;" />
+        <col style="width: 5%;" />
+        <col style="width: 10%;" />
+        <col style="width: 10%;" />
+    </ColGroup>
     <Columns>
-        <PropertyColumn Property="x => x.submission.title" Title="Cost" />
-        <PropertyColumn Property="x => x.currency"  Title="Currency"/>
-        <PropertyColumn Property="x => x.costInitial" Format="F2"  Title="Initial Amount"/>
-        <PropertyColumn Property="x => x.costRecurring" Format="F2"  Title="Recurring Amount"/>
-        <PropertyColumn Property="x => x.basis"  Title="Basis"/>
-        <PropertyColumn Property="x => x.basisCount"  Title="Basis Count"/>
-        <PropertyColumn Property="x => x.associatedRoleCount"  Title="Role Count"/>
-        <PropertyColumn Property="x => x.EventCount"  Title="Event Count"/>
-        <PropertyColumn Property="x => x.CostTotalInUsd()" Culture="enUsCulture" Title="Total Cost (USD)"  
+        <PropertyColumn Property="x => x.submission.title" Title="Cost"/>
+        <PropertyColumn Property="x => x.currency" Title="Currency"/>
+        <PropertyColumn Property="x => x.costInitial" Format="F2" Title="Initial Amount"/>
+        <PropertyColumn Property="x => x.costRecurring" Format="F2" Title="Recurring Amount"/>
+        <PropertyColumn Property="x => x.basis" Title="Basis"/>
+        <PropertyColumn Property="x => x.basisCount" Title="Basis Count"/>
+        <PropertyColumn Property="x => x.associatedRoleCount" Title="Role Count"/>
+        <PropertyColumn Property="x => x.EventCount" Title="Event Count"/>
+        <PropertyColumn Property="x => x.CostTotalInUsd()" Culture="enUsCulture" Title="Total Cost (USD)"
                         Format="C" CellStyle="font-weight:bold; background-color: rgba(0, 0, 0, .05)"
-                        AggregateDefinition="_costAggregation" />
+                        AggregateDefinition="_costAggregation"/>
         <TemplateColumn CellClass="clm-row-small">
             <CellTemplate>
                 <MudStack Row="true" Spacing="2" Justify="Justify.Center">
-                    <MudIconButton OnClick="() => EditItem(context.Item)" Color="Color.Info" Variant="Variant.Filled"
-                                   Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" />
-                    <MudIconButton OnClick="() => DeleteItem(context.Item)" Color="Color.Error" Variant="Variant.Filled"
-                                   Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" />
+                    <MudIconButton OnClick="() => EditItem(context.Item)" Color="Color.Tertiary" 
+                                   Variant="Variant.Filled" Icon="@Icons.Material.Filled.Edit" Size="Size.Medium"/>
+                    <MudIconButton OnClick="() => DeleteItem(context.Item)" Color="Color.Secondary" 
+                                   Variant="Variant.Filled" Icon="@Icons.Material.Filled.Delete" Size="Size.Medium"/>
                 </MudStack>
             </CellTemplate>
         </TemplateColumn>
